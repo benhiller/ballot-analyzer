@@ -56,7 +56,7 @@ CvrExport_#.json - actual results from ballots! most data is in the Sessions lis
           IsAmbiguous - if mark is unclear
           IsVote - true if mark was counted as a vote
 
-Question: if a ballot spans multiple cards, are they grouped together in a single CVR record, or can they be split across multiple records? If they are split, can you associate those cards with each other?
+Question: if a ballot spans multiple cards, are they grouped together in a single CVR record, or can they be split across multiple records? If they are split, can you associate those cards with each other? Do adjacent record ids matter?
 
 
 Data model:
@@ -76,4 +76,20 @@ ballot_type_id, contest_id
 Counting group table:
 id, name
 
-District, Predict, Party, District type, and table for CvrExport
+Party table:
+id, name
+
+Precinct portion table:
+id, name
+
+District table:
+id, name, district_type_id
+
+District type table:
+id, name
+
+Precinct portion district assoc table:
+precinct_portion_id, district_id
+
+Vote
+id, tabulator_id, batch_id, record_id, precinct_portion_id, ballot_type_id, contest_id, candidate_id, party_id, rank
