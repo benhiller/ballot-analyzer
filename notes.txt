@@ -1,0 +1,79 @@
+CVR (Cast Vote Records) Notes:
+
+Documentation: https://www.sfelections.org/results/20200303/data/DSuite_CVRExportFormat.pdf
+
+BallotTypeContestManifest.json - mapping between BallotTypeId and ContestId. Seems to be many-to-many. Basically which contests were present on which ballots
+
+BallotTypeManifest.json - lists types of ballots for this election
+
+CandidateManifest.json - lists all candidates, and specify which contest they belong to
+
+Configuration.json - config options selected used when generating these files. mostly not relevant
+
+ContestManifest.json - lists all contests, notes how many votes are allowed for each contest, and number of ranks
+
+CountingGroupManifest.json - lists counting groups (Election Day vs VBM)
+
+DistrictManifest.json - not documented! Seems to have several different granularities of districts, ex, state-wide, congressional district, and more
+
+DistrictPrecinctPortionManifest.json - mapping between precincts and districts (plural!) it belongs to
+
+DistrictTypeManifest.json - lists granularities of districts, referenced by DistrictManifest.json
+
+ElectionEventManifest.json - seems to describe the election itself
+
+OutstackConditionManifest.json - describes various error conditions for ballots (overvote, undervote, etc)
+
+PartyManifest.json - lists parties
+
+PrecinctManifest.json - lists all precincts
+
+PrecinctPortionManifest.json - seems very similar to PrecinctManifest.json, not sure the difference
+
+TabulatorManifest.json - lists each voting machine
+
+CvrExport_#.json - actual results from ballots! most data is in the Sessions list.
+
+  TabulatorId - which voting machine counted this ballot
+  BatchId, RecordId - just ids for this vote
+  CountingGroupId - which counting group this ballot belongs to
+  Original/Modified: actual votes, use IsCurrent to determine which is most up-to-date
+    PrecinctPortionId - precinct ballot was cast at
+    BallotTypeId
+    IsCurrent
+    Cards - list of cards scanned for this ballot
+      OutstackConditionIds - errors during processing this ballot?
+      PaperIndex - ballot card #?
+      Contests - list of each contest on scanned page.
+        Id - contest id
+        Overvotes, Undervotes, OutstackConditionIds - errors during processing this contest?
+        Marks - votes cast in this contest
+          CandidateId - which candidate was voted for
+          PartyId - party of candidate
+          Rank - only relevant for ranked choice contests, rank of this mark
+          WriteinIndex - only present if vote is for write-in candidate, not totally sure what this is
+          MarkDensity, WriteinDensity - how filled in bubble was!
+          IsAmbiguous - if mark is unclear
+          IsVote - true if mark was counted as a vote
+
+Question: if a ballot spans multiple cards, are they grouped together in a single CVR record, or can they be split across multiple records? If they are split, can you associate those cards with each other?
+
+
+Data model:
+
+Candidate table:
+id, name, contest_id
+
+Contest table:
+id, name, num_votes, num_ranks
+
+Ballot type table:
+id, name
+
+Ballot type contest assoc table:
+ballot_type_id, contest_id
+
+Counting group table:
+id, name
+
+District, Predict, Party, District type, and table for CvrExport
