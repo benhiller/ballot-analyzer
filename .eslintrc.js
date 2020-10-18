@@ -1,7 +1,7 @@
 module.exports = {
-  extends: 'standard',
+  extends: ['standard', 'prettier'],
   rules: {
-    semi: ['error', 'always'],
+    'semi': ['error', 'always'],
     'comma-dangle': ['error', 'always-multiline'],
   },
 };

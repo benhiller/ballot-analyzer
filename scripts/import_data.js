@@ -6,7 +6,12 @@ const dir = path.resolve(process.argv[2]);
 
 const CHUNK_SIZE = 50;
 
-const importManifest = async (fileName, tableName, itemToRow, returnIdMap = true) => {
+const importManifest = async (
+  fileName,
+  tableName,
+  itemToRow,
+  returnIdMap = true,
+) => {
   const manifestPath = path.join(dir, fileName);
   const data = await fs.promises.readFile(manifestPath, 'utf8');
   const parsedData = JSON.parse(data);
@@ -19,19 +24,17 @@ const importManifest = async (fileName, tableName, itemToRow, returnIdMap = true
 
   if (returnIdMap) {
     const idMap = await knex(tableName).select('id', 'cvr_id');
-    return Object.fromEntries(idMap.map(({ id, cvr_id: cvrId }) => [cvrId, id]));
+    return Object.fromEntries(
+      idMap.map(({ id, cvr_id: cvrId }) => [cvrId, id]),
+    );
   }
 };
 
 const importBallotTypes = async () => {
-  return importManifest(
-    'BallotTypeManifest.json',
-    'ballot_type',
-    (item) => ({
-      cvr_id: item.Id,
-      name: item.Description,
-    }),
-  );
+  return importManifest('BallotTypeManifest.json', 'ballot_type', (item) => ({
+    cvr_id: item.Id,
+    name: item.Description,
+  }));
 };
 
 const importCountingGroups = async () => {
@@ -46,14 +49,10 @@ const importCountingGroups = async () => {
 };
 
 const importParties = async () => {
-  return importManifest(
-    'PartyManifest.json',
-    'party',
-    (item) => ({
-      cvr_id: item.Id,
-      name: item.Description,
-    }),
-  );
+  return importManifest('PartyManifest.json', 'party', (item) => ({
+    cvr_id: item.Id,
+    name: item.Description,
+  }));
 };
 
 const importPrecinctPortions = async () => {
@@ -79,18 +78,17 @@ const importDistrictTypes = async () => {
 };
 
 const importDistricts = async (districtTypeIdMap) => {
-  return importManifest(
-    'DistrictManifest.json',
-    'district',
-    (item) => ({
-      cvr_id: item.Id,
-      name: item.Description,
-      district_type_id: districtTypeIdMap[item.DistrictTypeId],
-    }),
-  );
+  return importManifest('DistrictManifest.json', 'district', (item) => ({
+    cvr_id: item.Id,
+    name: item.Description,
+    district_type_id: districtTypeIdMap[item.DistrictTypeId],
+  }));
 };
 
-const importPrecinctPortionDistrictAssoc = async (precinctPortionIdMap, districtIdMap) => {
+const importPrecinctPortionDistrictAssoc = async (
+  precinctPortionIdMap,
+  districtIdMap,
+) => {
   return importManifest(
     'DistrictPrecinctPortionManifest.json',
     'precinct_portion_district_assoc',
@@ -115,28 +113,20 @@ const importBallotTypeContestAssocs = async (ballotTypeIdMap, contestIdMap) => {
 };
 
 const importContests = async () => {
-  return importManifest(
-    'ContestManifest.json',
-    'contest',
-    (item) => ({
-      cvr_id: item.Id,
-      name: item.Description,
-      num_votes: item.VoteFor,
-      num_ranks: item.NumOfRanks,
-    }),
-  );
+  return importManifest('ContestManifest.json', 'contest', (item) => ({
+    cvr_id: item.Id,
+    name: item.Description,
+    num_votes: item.VoteFor,
+    num_ranks: item.NumOfRanks,
+  }));
 };
 
 const importCandidates = async (contestIdMap) => {
-  return importManifest(
-    'CandidateManifest.json',
-    'candidate',
-    (item) => ({
-      cvr_id: item.Id,
-      name: item.Description,
-      contest_id: contestIdMap[item.ContestId],
-    }),
-  );
+  return importManifest('CandidateManifest.json', 'candidate', (item) => ({
+    cvr_id: item.Id,
+    name: item.Description,
+    contest_id: contestIdMap[item.ContestId],
+  }));
 };
 
 const importVotes = async (
