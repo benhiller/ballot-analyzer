@@ -1,0 +1,24 @@
+{
+  "name": "ballot-analyzer",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "git@github.com:benhiller/ballot-analyzer.git",
+  "author": "bhiller <benhiller@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "knex": "^0.21.6",
+    "sqlite3": "^5.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "import-data": "node scripts/import_data.js"
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  }
+}
