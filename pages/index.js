@@ -16,7 +16,8 @@ const Contest = ({ candidates }) => {
       <ul>
         {candidates.map((candidate) => (
           <li key={candidate.candidate_id}>
-            {candidate.candidate_name} {candidate.votes / totalVotes}
+            {candidate.candidate_name}{' '}
+            {((candidate.votes / totalVotes) * 100).toFixed(2)}%
           </li>
         ))}
       </ul>
