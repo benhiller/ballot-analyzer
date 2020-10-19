@@ -2,11 +2,16 @@ require('dotenv').config();
 
 const fs = require('fs');
 const path = require('path');
+const { attachOnConflictDoNothing } = require('knex-on-conflict-do-nothing');
+
 const knex = require('../knex.js');
+
+attachOnConflictDoNothing();
 
 const dir = path.resolve(process.argv[2]);
 
 const CHUNK_SIZE = 50;
+let electionId = null;
 
 const importManifest = async (
   fileName,
@@ -19,10 +24,17 @@ const importManifest = async (
   const parsedData = JSON.parse(data);
   const rows = [];
   for (const item of parsedData.List) {
-    rows.push(itemToRow(item));
+    const row = itemToRow(item);
+    if (electionId) {
+      row.election_id = electionId;
+    }
+    rows.push(row);
   }
 
-  await knex.batchInsert(tableName, rows, CHUNK_SIZE);
+  do {
+    const rowsToInsert = rows.splice(0, CHUNK_SIZE);
+    await knex.insert(rowsToInsert).into(tableName).onConflictDoNothing();
+  } while (rows.length > 0);
 
   if (returnIdMap) {
     const idMap = await knex(tableName).select('id', 'cvr_id');
@@ -30,6 +42,20 @@ const importManifest = async (
       idMap.map(({ id, cvr_id: cvrId }) => [cvrId, id]),
     );
   }
+};
+
+const importElection = async () => {
+  const idMap = await importManifest(
+    'ElectionEventManifest.json',
+    'election',
+    (item) => ({
+      cvr_id: item.Id,
+      name: item.Description,
+      date: item.ElectionDate,
+    }),
+  );
+
+  return idMap[Object.keys(idMap)[0]];
 };
 
 const importBallotTypes = async () => {
@@ -163,6 +189,7 @@ const importVotes = async (
       }
 
       const rowTemplate = {
+        election_id: electionId,
         tabulator_id: item.TabulatorId,
         batch_id: item.BatchId,
         record_id: item.RecordId,
@@ -189,13 +216,18 @@ const importVotes = async (
       }
     }
 
-    await knex.batchInsert('vote', rows, CHUNK_SIZE);
+    do {
+      const rowsToInsert = rows.splice(0, CHUNK_SIZE);
+      await knex.insert(rowsToInsert).into('vote');
+    } while (rows.length > 0);
+
     filesProcessed += 1;
     console.log(`${filesProcessed} of ${fileCount} files processed`);
   }
 };
 
 const importData = async () => {
+  electionId = await importElection();
   const ballotTypeIdMap = await importBallotTypes();
   const countingGroupIdMap = await importCountingGroups();
   const partyIdMap = await importParties();
@@ -217,6 +249,11 @@ const importData = async () => {
   );
 };
 
-importData().then(() => {
-  knex.destroy();
-});
+importData()
+  .then(() => {
+    knex.destroy();
+  })
+  .catch((err) => {
+    console.error('Import Failed!', err);
+    knex.destroy();
+  });

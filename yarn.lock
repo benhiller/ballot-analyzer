@@ -3980,6 +3980,11 @@ klona@^2.0.3:
   resolved "https://registry.yarnpkg.com/klona/-/klona-2.0.4.tgz#7bb1e3affb0cb8624547ef7e8f6708ea2e39dfc0"
   integrity sha512-ZRbnvdg/NxqzC7L9Uyqzf4psi1OM4Cuc+sJAkQPjO6XkQIJTNbfK2Rsmbw8fx1p2mkZdp2FZYo2+LwXYY/uwIA==
 
+knex-on-conflict-do-nothing@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/knex-on-conflict-do-nothing/-/knex-on-conflict-do-nothing-1.0.0.tgz#059613c4824ba9bf588be333f0010c47db2ea98a"
+  integrity sha512-vSbcKB/CSLF4fTf3nG3CEsC0ZayRDPsIx90fydwy/WUiOBkzuvkAh4oZSlGMN0o+Zq5OhpdMEBBtyD/i3OYLUQ==
+
 knex@^0.21.6:
   version "0.21.6"
   resolved "https://registry.yarnpkg.com/knex/-/knex-0.21.6.tgz#3e80ae38199c41e2dfe7d1d1a38470b1de1c93e7"
