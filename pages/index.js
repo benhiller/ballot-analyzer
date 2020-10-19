@@ -2,6 +2,8 @@ import React from 'react';
 
 import useSWR from 'swr';
 
+import getVotes from '../votes';
+
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 const Contest = ({ candidates }) => {
@@ -25,8 +27,16 @@ const Contest = ({ candidates }) => {
   );
 };
 
-function HomePage() {
-  const { data } = useSWR('/api/votes', fetcher);
+export async function getServerSideProps() {
+  const data = await getVotes();
+  return { props: { data } };
+}
+
+function HomePage({ data: initialData }) {
+  const { data } = useSWR('/api/votes', fetcher, {
+    revalidateOnFocus: false,
+    initialData,
+  });
 
   return (
     <div>
