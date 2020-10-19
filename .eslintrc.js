@@ -4,4 +4,5 @@ module.exports = {
     'semi': ['error', 'always'],
     'comma-dangle': ['error', 'always-multiline'],
   },
+  plugins: ['react'],
 };
