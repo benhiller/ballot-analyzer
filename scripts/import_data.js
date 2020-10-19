@@ -10,6 +10,7 @@ attachOnConflictDoNothing();
 
 const dir = path.resolve(process.argv[2]);
 
+// TODO: Is chunking at all useful?
 const CHUNK_SIZE = 500;
 let electionId = null;
 
@@ -167,6 +168,32 @@ const importVotes = async (
 ) => {
   await knex('vote').where('election_id', electionId).del();
 
+  const foreignKeyConstraints = [
+    'candidate',
+    'counting_group',
+    'ballot_type',
+    'precinct_portion',
+    'election',
+  ];
+  for (const fk of foreignKeyConstraints) {
+    try {
+      await knex.raw(`ALTER TABLE vote DROP CONSTRAINT vote_${fk}_id_foreign`);
+    } catch (err) {}
+  }
+
+  const indexes = [
+    'ballot_type_id',
+    'candidate_id',
+    'counting_group_id',
+    'election_id',
+    'precinct_portion_id',
+  ];
+  for (const idx of indexes) {
+    try {
+      await knex.raw(`DROP INDEX vote_${idx}_index`);
+    } catch (err) {}
+  }
+
   const files = await fs.promises.readdir(dir);
   const fileCount = files.length;
   let filesProcessed = 0;
@@ -206,10 +233,7 @@ const importVotes = async (
             if (mark.IsVote) {
               rows.push({
                 ...rowTemplate,
-                contest_id: contestIdMap[contest.Id],
                 candidate_id: candidateIdMap[mark.CandidateId],
-                // TODO: PartyId is undefined for write-ins, maybe change this check
-                party_id: mark.PartyId !== 0 ? partyIdMap[mark.PartyId] : null,
                 rank: mark.Rank,
               });
             }
@@ -218,14 +242,25 @@ const importVotes = async (
       }
     }
 
-    do {
-      const rowsToInsert = rows.splice(0, CHUNK_SIZE);
-      await knex.insert(rowsToInsert).into('vote');
-    } while (rows.length > 0);
+    await knex.insert(rows).into('vote');
 
     filesProcessed += 1;
-    console.log(`${filesProcessed} of ${fileCount} files processed`);
+    if (filesProcessed % 100 == 0) {
+      console.log(`${filesProcessed} of ${fileCount} files processed`);
+    }
   }
+
+  for (const fk of foreignKeyConstraints) {
+    await knex.raw(
+      `ALTER TABLE vote ADD CONSTRAINT vote_${fk}_id_foreign FOREIGN KEY (${fk}_id) REFERENCES ${fk} (id)`,
+    );
+  }
+
+  for (const idx of indexes) {
+    await knex.raw(`CREATE INDEX vote_${idx}_index ON vote (${idx})`);
+  }
+
+  await knex.raw('ANALYZE');
 };
 
 const importData = async () => {
