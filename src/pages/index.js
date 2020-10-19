@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
@@ -9,8 +9,8 @@ import Contest from 'src/components/Contest';
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 export async function getServerSideProps({ query }) {
-  const data = await getVotes({ query });
-  return { props: { data } };
+  const data = await getVotes(query);
+  return { props: { initiaData: data, intialQuery: JSON.stringify(query) } };
 }
 
 const useStyles = createUseStyles({
@@ -24,34 +24,53 @@ const useStyles = createUseStyles({
   },
 });
 
-function HomePage({ data: initialData }) {
+function HomePage({ initialData, initialQuery }) {
   const classes = useStyles();
 
   const router = useRouter();
 
+  const [candidateFilter, setCandidateFilter] = useState(
+    router.query?.candidate || '',
+  );
+
   const queryString = new URLSearchParams(router.query).toString();
   const { data } = useSWR(`/api/votes?${queryString}`, fetcher, {
     revalidateOnFocus: false,
-    initialData,
+    initialData:
+      JSON.stringify(router.query) === initialQuery ? initialData : null,
   });
 
-  if (!data) {
-    return <div></div>;
-  }
+  const changeCandidateFilter = (candidateFilter) => {
+    setCandidateFilter(candidateFilter);
+    router.push(`/?candidate=${candidateFilter}`, undefined, { shallow: true });
+  };
 
-  const groupedContests = data.reduce((arr, contest) => {
-    if (arr.length === 0) {
-      arr.push([contest]);
-    } else if (arr[arr.length - 1].length === 2) {
-      arr.push([contest]);
-    } else {
-      arr[arr.length - 1].push(contest);
-    }
-    return arr;
-  }, []);
+  let groupedContests = [];
+  if (data) {
+    groupedContests = data.reduce((arr, contest) => {
+      if (arr.length === 0) {
+        arr.push([contest]);
+      } else if (arr[arr.length - 1].length === 2) {
+        arr.push([contest]);
+      } else {
+        arr[arr.length - 1].push(contest);
+      }
+      return arr;
+    }, []);
+  }
 
   return (
     <div>
+      <h1>San Francisco Election Results</h1>
+      <div>
+        People who voted for{' '}
+        <input
+          type="text"
+          value={candidateFilter}
+          placeholder="anyone"
+          onChange={(e) => changeCandidateFilter(e.target.value)}
+        />
+      </div>
       {groupedContests.map((contests, idx) => (
         <div key={idx} className={classes.row}>
           {contests.map((contest) => (

@@ -1,12 +1,26 @@
 import knex from 'src/knex';
 
 export default async function getVotes(query) {
-  const votesByCandidate = await knex('vote')
+  let votesQuery = knex('vote')
     .select({
       candidate_id: 'candidate_id',
     })
     .count()
     .groupBy('candidate_id');
+
+  if (query.candidate) {
+    votesQuery = votesQuery.whereExists(
+      knex
+        .select('id')
+        .from('vote AS inner_vote')
+        .whereRaw(
+          'vote.tabulator_id = inner_vote.tabulator_id AND vote.batch_id = inner_vote.batch_id AND vote.record_id = inner_vote.record_id AND inner_vote.candidate_id = ?',
+          [query.candidate],
+        ),
+    );
+  }
+
+  const votesByCandidate = await votesQuery;
 
   const candidateToVotes = {};
   for (const row of votesByCandidate) {
