@@ -98,3 +98,37 @@ Can we have one row per-ballot page instead of one row per-vote? Would go from 4
 Aggregated vote:
 id, tabulator_id, batch_id, record_id, precinct_portion_id, ballot_type_id, votes:
 [ { candidate_id, rank } ]
+
+Queries:
+
+SELECT candidate.id as candidate_id, candidate.name as candidate_name, candidate.contest_id as contest_id, contest.name as contest_name, COUNT(vote.id) as votes
+FROM candidate
+JOIN contest ON contest.id = candidate.contest_id
+JOIN vote ON vote.candidate_id = candidate.id
+GROUP BY candidate.id, contest.id;
+
+~4s
+
+SELECT candidate.id as candidate_id, candidate.name as candidate_name, contest.id as contest_id, contest.name as contest_name, a.votes as votes
+FROM (
+  SELECT (jsonb_array_elements_text(ballot.votes)::jsonb)->'candidate_id' as candidate_id, COUNT(*) as votes
+  FROM ballot
+  GROUP BY (jsonb_array_elements_text(ballot.votes)::jsonb)->'candidate_id'
+) AS a
+JOIN candidate ON candidate.id = a.candidate_id::integer
+JOIN contest ON candidate.contest_id = contest.id
+GROUP BY candidate.id, contest.id, a.votes;
+
+~5s
+
+  WHERE ballot.votes @> '[{"candidate_id":18}'
++ gin index on votes
+
+582ms
+
+WHERE EXISTS (SELECT id FROM vote as vote_s WHERE vote.tabulator_id = vote_s.tabulator_id AND vote.batch_id = vote_s.batch_id AND vote.record_id = vote_s.record_id AND vote_s.candidate_id = 18)
++ no index
+
+~4s
+
+best approach: unagg but only query votes table (with index on candidate_id) and then do separate query for candidate + contest data
