@@ -1,4 +1,4 @@
-import getVotes from '../../votes';
+import getVotes from 'votes';
 
 export default async function handler(req, res) {
   const response = await getVotes(req.query);

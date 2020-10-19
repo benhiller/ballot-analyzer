@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { attachOnConflictDoNothing } = require('knex-on-conflict-do-nothing');
 
-const knex = require('../knex.js');
+const knex = require('../src/knex.js');
 
 attachOnConflictDoNothing();
 
