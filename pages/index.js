@@ -1,6 +1,7 @@
 import React from 'react';
 
 import useSWR from 'swr';
+import { useRouter } from 'next/router';
 
 import getVotes from '../votes';
 
@@ -27,13 +28,16 @@ const Contest = ({ candidates }) => {
   );
 };
 
-export async function getServerSideProps() {
-  const data = await getVotes();
+export async function getServerSideProps({ query }) {
+  const data = await getVotes({ query });
   return { props: { data } };
 }
 
 function HomePage({ data: initialData }) {
-  const { data } = useSWR('/api/votes', fetcher, {
+  const router = useRouter();
+
+  const queryString = new URLSearchParams(router.query).toString();
+  const { data } = useSWR(`/api/votes?${queryString}`, fetcher, {
     revalidateOnFocus: false,
     initialData,
   });
