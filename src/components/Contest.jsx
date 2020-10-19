@@ -2,9 +2,7 @@ import React from 'react';
 import { createUseStyles } from 'react-jss';
 
 const useStyles = createUseStyles({
-  candidate: {
-    fontWeight: 'bold',
-  },
+  candidate: {},
 });
 
 const Contest = ({ candidates }) => {
@@ -15,11 +13,12 @@ const Contest = ({ candidates }) => {
     (acc, candidate) => acc + candidate.votes,
     0,
   );
+  const visibleCandidates = candidates.slice(0, 5);
   return (
     <div>
       {candidates[0].contest_name}
       <ul>
-        {candidates.map((candidate) => (
+        {visibleCandidates.map((candidate) => (
           <li key={candidate.candidate_id} className={classes.candidate}>
             {candidate.candidate_name}{' '}
             {((candidate.votes / totalVotes) * 100).toFixed(2)}%

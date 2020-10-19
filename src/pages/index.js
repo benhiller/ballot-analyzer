@@ -13,7 +13,20 @@ export async function getServerSideProps({ query }) {
   return { props: { data } };
 }
 
+const useStyles = createUseStyles({
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  contest: {
+    flex: 1,
+    border: '1px solid #f8f8f8',
+  },
+});
+
 function HomePage({ data: initialData }) {
+  const classes = useStyles();
+
   const router = useRouter();
 
   const queryString = new URLSearchParams(router.query).toString();
@@ -22,12 +35,34 @@ function HomePage({ data: initialData }) {
     initialData,
   });
 
+  if (!data) {
+    return <div></div>;
+  }
+
+  const groupedContestIds = Object.keys(data).reduce((arr, contestId) => {
+    console.log(arr);
+    if (arr.length === 0) {
+      arr.push([contestId]);
+    } else if (arr[arr.length - 1].length === 2) {
+      arr.push([contestId]);
+    } else {
+      arr[arr.length - 1].push(contestId);
+    }
+    return arr;
+  }, []);
+
+  // TODO - filter contests where all candidates have 0 votes
   return (
     <div>
-      {data &&
-        Object.keys(data).map((contestId) => (
-          <Contest key={contestId} candidates={data[contestId]} />
-        ))}
+      {groupedContestIds.map((contestIds, idx) => (
+        <div key={idx} className={classes.row}>
+          {contestIds.map((contestId) => (
+            <div key={contestId} className={classes.contest}>
+              <Contest candidates={data[contestId]} />
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
