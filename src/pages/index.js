@@ -39,26 +39,25 @@ function HomePage({ data: initialData }) {
     return <div></div>;
   }
 
-  const groupedContestIds = Object.keys(data).reduce((arr, contestId) => {
-    console.log(arr);
+  const groupedContests = data.reduce((arr, contest) => {
     if (arr.length === 0) {
-      arr.push([contestId]);
+      arr.push([contest]);
     } else if (arr[arr.length - 1].length === 2) {
-      arr.push([contestId]);
+      arr.push([contest]);
     } else {
-      arr[arr.length - 1].push(contestId);
+      arr[arr.length - 1].push(contest);
     }
     return arr;
   }, []);
+  console.log(groupedContests);
 
-  // TODO - filter contests where all candidates have 0 votes
   return (
     <div>
-      {groupedContestIds.map((contestIds, idx) => (
+      {groupedContests.map((contests, idx) => (
         <div key={idx} className={classes.row}>
-          {contestIds.map((contestId) => (
-            <div key={contestId} className={classes.contest}>
-              <Contest candidates={data[contestId]} />
+          {contests.map((contest) => (
+            <div key={contest.id} className={classes.contest}>
+              <Contest contest={contest} />
             </div>
           ))}
         </div>

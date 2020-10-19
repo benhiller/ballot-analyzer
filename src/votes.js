@@ -27,14 +27,25 @@ export default async function getVotes(query) {
     candidate.votes = candidateToVotes[candidate.candidate_id] || 0;
   }
 
-  const response = {};
+  const contestToCandidateMap = {};
   for (const candidate of candidates) {
-    if (response[candidate.contest_id]) {
-      response[candidate.contest_id].push(candidate);
+    const finalCandidate = {
+      id: candidate.candidate_id,
+      name: candidate.candidate_name,
+      votes: candidate.votes,
+    };
+    if (contestToCandidateMap[candidate.contest_id]) {
+      contestToCandidateMap[candidate.contest_id].candidates.push(
+        finalCandidate,
+      );
     } else {
-      response[candidate.contest_id] = [candidate];
+      contestToCandidateMap[candidate.contest_id] = {
+        id: candidate.contest_id,
+        name: candidate.contest_name,
+        candidates: [finalCandidate],
+      };
     }
   }
 
-  return response;
+  return Object.values(contestToCandidateMap);
 }
