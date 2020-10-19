@@ -3,8 +3,8 @@ import { createUseStyles } from 'react-jss';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
 
-import getVotes from 'votes';
-import Contest from 'components/Contest';
+import getVotes from 'src/votes';
+import Contest from 'src/components/Contest';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
