@@ -10,7 +10,7 @@ attachOnConflictDoNothing();
 
 const dir = path.resolve(process.argv[2]);
 
-const CHUNK_SIZE = 50;
+const CHUNK_SIZE = 500;
 let electionId = null;
 
 const importManifest = async (

@@ -138,14 +138,6 @@ exports.up = function (knex) {
         .foreign('counting_group_id')
         .references('id')
         .inTable('counting_group');
-      // table.unique([
-      //   'election_id',
-      //   'tabulator_id',
-      //   'batch_id',
-      //   'record_id',
-      //   'contest_id',
-      //   'rank',
-      // ]);
     });
 };
 
