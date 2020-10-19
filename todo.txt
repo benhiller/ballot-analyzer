@@ -1,0 +1,1 @@
+Make import-data support 2019 CVRExport (no Election manifest, single Cvr json file)
