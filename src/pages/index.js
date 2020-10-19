@@ -49,7 +49,6 @@ function HomePage({ data: initialData }) {
     }
     return arr;
   }, []);
-  console.log(groupedContests);
 
   return (
     <div>

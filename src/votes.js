@@ -47,5 +47,9 @@ export default async function getVotes(query) {
     }
   }
 
-  return Object.values(contestToCandidateMap);
+  return Object.values(contestToCandidateMap).filter(
+    (contest) =>
+      contest.candidates.reduce((acc, candidate) => acc + candidate.votes, 0) >
+      0,
+  );
 }
