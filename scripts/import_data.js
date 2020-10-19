@@ -10,7 +10,7 @@ attachOnConflictDoNothing();
 
 const dir = path.resolve(process.argv[2]);
 
-const CHUNK_SIZE = 50;
+const CHUNK_SIZE = 500;
 let electionId = null;
 
 const importManifest = async (
@@ -188,7 +188,7 @@ const importVotes = async (
         console.log('Uhoh');
       }
 
-      const rowTemplate = {
+      const row = {
         election_id: electionId,
         tabulator_id: item.TabulatorId,
         batch_id: item.BatchId,
@@ -196,29 +196,29 @@ const importVotes = async (
         counting_group_id: countingGroupIdMap[item.CountingGroupId],
         ballot_type_id: ballotTypeIdMap[vote.BallotTypeId],
         precinct_portion_id: precinctPortionIdMap[vote.BallotTypeId],
+        votes: [],
       };
 
       for (const card of vote.Cards) {
         for (const contest of card.Contests) {
           for (const mark of contest.Marks) {
             if (mark.IsVote) {
-              rows.push({
-                ...rowTemplate,
-                contest_id: contestIdMap[contest.Id],
+              row.votes.push({
                 candidate_id: candidateIdMap[mark.CandidateId],
-                // TODO: PartyId is undefined for write-ins, maybe change this check
-                party_id: mark.PartyId !== 0 ? partyIdMap[mark.PartyId] : null,
                 rank: mark.Rank,
               });
             }
           }
         }
       }
+
+      row.votes = JSON.stringify(row.votes);
+      rows.push(row);
     }
 
     do {
       const rowsToInsert = rows.splice(0, CHUNK_SIZE);
-      await knex.insert(rowsToInsert).into('vote');
+      await knex.insert(rowsToInsert).into('ballot').onConflictDoNothing();
     } while (rows.length > 0);
 
     filesProcessed += 1;

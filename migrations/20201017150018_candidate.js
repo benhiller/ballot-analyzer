@@ -111,7 +111,7 @@ exports.up = function (knex) {
       table.foreign('district_id').references('id').inTable('district');
       table.unique(['election_id', 'precinct_portion_id', 'district_id']);
     })
-    .createTable('vote', function (table) {
+    .createTable('ballot', function (table) {
       table.increments('id');
       table.integer('election_id').unsigned().notNullable();
       table.integer('tabulator_id').notNullable();
@@ -119,11 +119,8 @@ exports.up = function (knex) {
       table.integer('record_id').notNullable();
       table.integer('precinct_portion_id').unsigned().notNullable();
       table.integer('ballot_type_id').unsigned().notNullable();
-      table.integer('contest_id').unsigned().notNullable();
-      table.integer('candidate_id').unsigned().notNullable();
-      table.integer('party_id').unsigned();
       table.integer('counting_group_id').unsigned().notNullable();
-      table.integer('rank');
+      table.jsonb('votes');
 
       table.foreign('election_id').references('id').inTable('election');
       table
@@ -131,27 +128,17 @@ exports.up = function (knex) {
         .references('id')
         .inTable('precinct_portion');
       table.foreign('ballot_type_id').references('id').inTable('ballot_type');
-      table.foreign('contest_id').references('id').inTable('contest');
-      table.foreign('candidate_id').references('id').inTable('candidate');
-      table.foreign('party_id').references('id').inTable('party');
       table
         .foreign('counting_group_id')
         .references('id')
         .inTable('counting_group');
-      // table.unique([
-      //   'election_id',
-      //   'tabulator_id',
-      //   'batch_id',
-      //   'record_id',
-      //   'contest_id',
-      //   'rank',
-      // ]);
+      table.unique(['election_id', 'tabulator_id', 'batch_id', 'record_id']);
     });
 };
 
 exports.down = function (knex) {
   return knex.schema
-    .dropTable('vote')
+    .dropTable('ballot')
     .dropTable('precinct_portion_district_assoc')
     .dropTable('district')
     .dropTable('district_type')

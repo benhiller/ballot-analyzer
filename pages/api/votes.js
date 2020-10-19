@@ -10,7 +10,12 @@ export default async function handler(req, res) {
     })
     .count({ votes: 'vote.id' })
     .join('contest', 'contest.id', '=', 'candidate.contest_id')
-    .join('vote', 'vote.candidate_id', '=', 'candidate.id')
+    .join(
+      'ballot',
+      'ballot.votes',
+      '@>',
+      "('[{\"candidate_id\":' || candidate.id || '}]')::jsonb",
+    )
     .groupBy('candidate.id');
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
