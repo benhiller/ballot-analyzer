@@ -1,6 +1,8 @@
+require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
-const knex = require('./knex.js');
+const knex = require('../knex.js');
 
 const dir = path.resolve(process.argv[2]);
 
