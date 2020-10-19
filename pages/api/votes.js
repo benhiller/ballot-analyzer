@@ -1,6 +1,18 @@
 import knex from '../../knex';
 
 export default async function handler(req, res) {
+  const votesByCandidate = await knex('vote')
+    .select({
+      candidate_id: 'candidate_id',
+    })
+    .count()
+    .groupBy('candidate_id');
+
+  const candidateToVotes = {};
+  for (const row of votesByCandidate) {
+    candidateToVotes[row.candidate_id] = parseInt(row.count);
+  }
+
   const candidates = await knex('candidate')
     .select({
       candidate_id: 'candidate.id',
@@ -8,10 +20,13 @@ export default async function handler(req, res) {
       contest_id: 'candidate.contest_id',
       contest_name: 'contest.name',
     })
-    .count({ votes: 'vote.id' })
     .join('contest', 'contest.id', '=', 'candidate.contest_id')
-    .join('vote', 'vote.candidate_id', '=', 'candidate.id')
-    .groupBy('candidate.id');
+    .groupBy('candidate.id', 'contest.id');
+
+  for (const candidate of candidates) {
+    candidate.votes = candidateToVotes[candidate.candidate_id] || 0;
+  }
+
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
 

@@ -26,7 +26,6 @@ const Contest = ({ candidates }) => {
 
 function HomePage() {
   const { data } = useSWR('/api/votes', fetcher);
-  console.log(data);
 
   return (
     <div>
