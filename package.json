@@ -6,8 +6,10 @@
   "author": "bhiller <benhiller@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "knex": "^0.21.6",
     "next": "^9.5.5",
+    "pg": "^8.4.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "sqlite3": "^5.0.0",
