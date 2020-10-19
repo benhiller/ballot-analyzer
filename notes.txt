@@ -93,3 +93,8 @@ precinct_portion_id, district_id
 
 Vote
 id, tabulator_id, batch_id, record_id, precinct_portion_id, ballot_type_id, contest_id, candidate_id, party_id, rank
+
+Can we have one row per-ballot page instead of one row per-vote? Would go from 4.7m rows to 574k.
+Aggregated vote:
+id, tabulator_id, batch_id, record_id, precinct_portion_id, ballot_type_id, votes:
+[ { candidate_id, rank } ]

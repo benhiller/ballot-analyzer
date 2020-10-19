@@ -14,5 +14,14 @@ export default async function handler(req, res) {
     .groupBy('candidate.id');
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(candidates));
+
+  const response = {};
+  for (const candidate of candidates) {
+    if (response[candidate.contest_id]) {
+      response[candidate.contest_id].push(candidate);
+    } else {
+      response[candidate.contest_id] = [candidate];
+    }
+  }
+  res.end(JSON.stringify(response));
 }
