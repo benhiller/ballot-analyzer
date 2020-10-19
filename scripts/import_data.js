@@ -165,6 +165,8 @@ const importVotes = async (
   partyIdMap,
   countingGroupIdMap,
 ) => {
+  await knex('vote').where('election_id', electionId).del();
+
   const files = await fs.promises.readdir(dir);
   const fileCount = files.length;
   let filesProcessed = 0;
