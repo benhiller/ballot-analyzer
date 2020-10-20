@@ -2,6 +2,23 @@ export function capitalizeName(name) {
   return name
     .split(' ')
     .map((token) => {
+      let capitalizedToken = '';
+      let foundAlpha = false;
+      for (const [idx, char] of token.split('').entries()) {
+        if (!foundAlpha && /[a-z]/i.test(char)) {
+          // Only set foundAlpha when we find an a-z char, so we capitalize the
+          // first alphabetical character in nicknames like "Rocky"
+          capitalizedToken += char.toUpperCase();
+          foundAlpha = true;
+        } else if (char === '.') {
+          // Reset foundAlpha to handle names like J.R.
+          foundAlpha = false;
+          capitalizedToken += char.toLowerCase();
+        } else {
+          capitalizedToken += char.toLowerCase();
+        }
+      }
+      return capitalizedToken;
       if (token.length === 0) {
         return token;
       } else if (token.length === 1) {
@@ -40,6 +57,10 @@ export function humanReadableContest(name) {
     }
 
     return `${humanReadableParty} Presidential Primary`;
+  } else if (name.startsWith('US House of Rep')) {
+    const district = name.slice('US House of Rep '.length);
+
+    return `US House of Representatives - ${district}`;
   }
 
   return name;

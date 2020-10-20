@@ -42,7 +42,13 @@ function HomePage({ initialData, initialQuery }) {
 
   const changeCandidateFilter = (candidateFilter) => {
     setCandidateFilter(candidateFilter);
-    router.push(`/?candidate=${candidateFilter}`, undefined, { shallow: true });
+    if (candidateFilter) {
+      router.push(`/?candidate=${candidateFilter}`, undefined, {
+        shallow: true,
+      });
+    } else {
+      router.push(`/`, undefined, { shallow: true });
+    }
   };
 
   let groupedContests = [];
