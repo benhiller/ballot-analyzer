@@ -47,7 +47,7 @@ function HomePage({ initialData, initialQuery, initialCandidateData }) {
       JSON.stringify(router.query) === initialQuery ? initialData : null,
   });
 
-  const { candidateData } = useSWR(`/api/candidates`, fetcher, {
+  const { data: candidateData } = useSWR(`/api/candidates`, fetcher, {
     revalidateOnFocus: false,
     initialData: initialCandidateData,
   });
