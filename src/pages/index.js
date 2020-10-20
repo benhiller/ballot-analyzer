@@ -23,13 +23,32 @@ export async function getServerSideProps({ query }) {
 }
 
 const useStyles = createUseStyles({
+  container: {
+    margin: '10px',
+  },
+  filters: {
+    marginBottom: '10px',
+  },
+  typeaheadLabel: {
+    marginRight: '5px',
+  },
+  typeahead: {
+    'display': 'inline-block',
+    'width': '300px',
+    '& .rbt-menu': {
+      width: '450px !important',
+    },
+  },
   row: {
     display: 'flex',
     flexDirection: 'row',
   },
   contest: {
     flex: 1,
-    border: '1px solid #f8f8f8',
+    border: '1px solid #ccc',
+    margin: '10px',
+    padding: '10px',
+    borderRadius: '3px',
   },
 });
 
@@ -102,15 +121,17 @@ function HomePage({ initialData, initialQuery, initialCandidateData }) {
   }
 
   return (
-    <div>
+    <div className={classes.container}>
       <h1>San Francisco Election Results</h1>
-      <div>
-        People who voted for
+      <div className={classes.filters}>
+        <span className={classes.typeaheadLabel}>People who voted for</span>
         <Typeahead
           id="candidate-filter-typeahead"
+          className={classes.typeahead}
           onChange={changeCandidateFilter}
           options={candidateOptions}
           placeholder="anyone"
+          positionFixed
           selected={selectedCandidateFilter}
         />
       </div>

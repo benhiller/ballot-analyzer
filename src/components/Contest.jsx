@@ -5,6 +5,10 @@ import { capitalizeName, humanReadableContest } from 'src/formatting';
 
 const useStyles = createUseStyles({
   candidate: {},
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 });
 
 const Contest = ({ contest }) => {
@@ -24,7 +28,17 @@ const Contest = ({ contest }) => {
     : candidates.slice(0, 5);
   return (
     <div>
-      {humanReadableContest(contest.name)}
+      <div className={classes.header}>
+        <div>{humanReadableContest(contest.name)}</div>
+        <div>
+          {visibleCandidates.length != candidates.length && (
+            <a onClick={() => setShowAllCandidates(true)}>+ Show All</a>
+          )}
+          {showAllCandidates && (
+            <a onClick={() => setShowAllCandidates(false)}>- Show Fewer</a>
+          )}
+        </div>
+      </div>
       <ul>
         {visibleCandidates.map((candidate) => (
           <li key={candidate.id} className={classes.candidate}>
@@ -33,12 +47,6 @@ const Contest = ({ contest }) => {
           </li>
         ))}
       </ul>
-      {visibleCandidates.length != candidates.length && (
-        <a onClick={() => setShowAllCandidates(true)}>+ Show All</a>
-      )}
-      {showAllCandidates && (
-        <a onClick={() => setShowAllCandidates(false)}>- Show Fewer</a>
-      )}
     </div>
   );
 };
