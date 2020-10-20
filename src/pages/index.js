@@ -10,7 +10,7 @@ const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 export async function getServerSideProps({ query }) {
   const data = await getVotes(query);
-  return { props: { initiaData: data, intialQuery: JSON.stringify(query) } };
+  return { props: { initialData: data, initialQuery: JSON.stringify(query) } };
 }
 
 const useStyles = createUseStyles({
