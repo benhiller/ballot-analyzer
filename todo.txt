@@ -1,1 +1,2 @@
-Make import-data support 2019 CVRExport (no Election manifest, single Cvr json file)
+- Make import-data support 2019 CVRExport (no Election manifest, single Cvr json file)
+- Can we identify how many ballots aren't included when a filter is applied?
