@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'react-jss';
 
+import { capitalizeName, humanReadableContest } from 'src/formatting';
+
 const useStyles = createUseStyles({
   candidate: {},
 });
@@ -22,11 +24,11 @@ const Contest = ({ contest }) => {
     : candidates.slice(0, 5);
   return (
     <div>
-      {contest.name}
+      {humanReadableContest(contest.name)}
       <ul>
         {visibleCandidates.map((candidate) => (
           <li key={candidate.id} className={classes.candidate}>
-            {candidate.name} ({candidate.votes}){' '}
+            {capitalizeName(candidate.name)} ({candidate.votes}){' '}
             {((candidate.votes / totalVotes) * 100).toFixed(2)}%
           </li>
         ))}

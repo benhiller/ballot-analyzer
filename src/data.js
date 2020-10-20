@@ -1,6 +1,6 @@
 import knex from 'src/knex';
 
-export default async function getVotes(query) {
+export async function getVotes(query) {
   let votesQuery = knex('vote')
     .select({
       candidate_id: 'candidate_id',
