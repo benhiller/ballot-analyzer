@@ -3,14 +3,21 @@ import { createUseStyles } from 'react-jss';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
 
-import { getVotes } from 'src/data';
+import { getCandidates, getVotes } from 'src/data';
 import Contest from 'src/components/Contest';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 export async function getServerSideProps({ query }) {
-  const data = await getVotes(query);
-  return { props: { initialData: data, initialQuery: JSON.stringify(query) } };
+  const initialData = await getVotes(query);
+  const initialCandidateData = await getCandidates();
+  return {
+    props: {
+      initialData,
+      initialQuery: JSON.stringify(query),
+      initialCandidateData,
+    },
+  };
 }
 
 const useStyles = createUseStyles({
@@ -24,7 +31,7 @@ const useStyles = createUseStyles({
   },
 });
 
-function HomePage({ initialData, initialQuery }) {
+function HomePage({ initialData, initialQuery, initialCandidateData }) {
   const classes = useStyles();
 
   const router = useRouter();
@@ -38,6 +45,11 @@ function HomePage({ initialData, initialQuery }) {
     revalidateOnFocus: false,
     initialData:
       JSON.stringify(router.query) === initialQuery ? initialData : null,
+  });
+
+  const { candidateData } = useSWR(`/api/candidates`, fetcher, {
+    revalidateOnFocus: false,
+    initialData: initialCandidateData,
   });
 
   const changeCandidateFilter = (candidateFilter) => {

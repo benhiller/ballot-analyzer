@@ -1,5 +1,19 @@
 import knex from 'src/knex';
 
+export async function getCandidates() {
+  const candidates = await knex('candidate')
+    .select({
+      candidate_id: 'candidate.id',
+      candidate_name: 'candidate.name',
+      contest_id: 'candidate.contest_id',
+      contest_name: 'contest.name',
+    })
+    .join('contest', 'contest.id', '=', 'candidate.contest_id')
+    .groupBy('candidate.id', 'contest.id');
+
+  return candidates;
+}
+
 export async function getVotes(query) {
   let votesQuery = knex('vote')
     .select({
