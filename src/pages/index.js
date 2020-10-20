@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 import { getCandidates, getVotes } from 'src/data';
+import { capitalizeName, humanReadableContest } from 'src/formatting';
 import Contest from 'src/components/Contest';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
@@ -37,7 +39,7 @@ function HomePage({ initialData, initialQuery, initialCandidateData }) {
   const router = useRouter();
 
   const [candidateFilter, setCandidateFilter] = useState(
-    router.query?.candidate || '',
+    router.query?.candidate || null,
   );
 
   const queryString = new URLSearchParams(router.query).toString();
@@ -52,13 +54,15 @@ function HomePage({ initialData, initialQuery, initialCandidateData }) {
     initialData: initialCandidateData,
   });
 
-  const changeCandidateFilter = (candidateFilter) => {
-    setCandidateFilter(candidateFilter);
+  const changeCandidateFilter = (candidateFilters) => {
+    const candidateFilter = candidateFilters[0];
     if (candidateFilter) {
-      router.push(`/?candidate=${candidateFilter}`, undefined, {
+      setCandidateFilter(candidateFilter.id);
+      router.push(`/?candidate=${candidateFilter.id}`, undefined, {
         shallow: true,
       });
     } else {
+      setCandidateFilter(null);
       router.push(`/`, undefined, { shallow: true });
     }
   };
@@ -77,16 +81,37 @@ function HomePage({ initialData, initialQuery, initialCandidateData }) {
     }, []);
   }
 
+  let candidateOptions = [];
+  let selectedCandidateFilter = [];
+  if (candidateData) {
+    for (const candidate of candidateData) {
+      const option = {
+        id: candidate.candidate_id,
+        label:
+          capitalizeName(candidate.candidate_name) +
+          ' (' +
+          humanReadableContest(candidate.contest_name) +
+          ')',
+      };
+
+      candidateOptions.push(option);
+      if (option.id === candidateFilter) {
+        selectedCandidateFilter.push(option);
+      }
+    }
+  }
+
   return (
     <div>
       <h1>San Francisco Election Results</h1>
       <div>
-        People who voted for{' '}
-        <input
-          type="text"
-          value={candidateFilter}
+        People who voted for
+        <Typeahead
+          id="candidate-filter-typeahead"
+          onChange={changeCandidateFilter}
+          options={candidateOptions}
           placeholder="anyone"
-          onChange={(e) => changeCandidateFilter(e.target.value)}
+          selected={selectedCandidateFilter}
         />
       </div>
       {groupedContests.map((contests, idx) => (
