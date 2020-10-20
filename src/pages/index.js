@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
+import Select from 'react-select';
 
 import { getCandidates, getVotes } from 'src/data';
 import Contest from 'src/components/Contest';
+import { capitalizeName } from 'src/formatting';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
@@ -77,16 +79,23 @@ function HomePage({ initialData, initialQuery, initialCandidateData }) {
     }, []);
   }
 
+  let candidateOptions = [];
+  console.log(candidateData);
+  if (candidateData) {
+    candidateOptions = candidateData.map((candidate) => ({
+      label: capitalizeName(candidate.candidate_name),
+      value: candidate.candidate_id,
+    }));
+  }
+
   return (
     <div>
       <h1>San Francisco Election Results</h1>
       <div>
         People who voted for{' '}
-        <input
-          type="text"
-          value={candidateFilter}
-          placeholder="anyone"
-          onChange={(e) => changeCandidateFilter(e.target.value)}
+        <Select
+          onChange={({ value }) => changeCandidateFilter(value)}
+          options={candidateOptions}
         />
       </div>
       {groupedContests.map((contests, idx) => (
