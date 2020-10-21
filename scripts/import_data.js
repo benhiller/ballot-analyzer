@@ -44,13 +44,23 @@ const importManifest = async (
     rows.push(row);
   }
 
+  const allRows = [...rows];
   while (rows.length > 0) {
     const rowsToInsert = rows.splice(0, CHUNK_SIZE);
     await knex.insert(rowsToInsert).into(tableName).onConflictDoNothing();
   }
 
   if (returnIdMap) {
-    const idMap = await knex(tableName).select('id', 'cvr_id');
+    if (allRows.length === 0) {
+      return {};
+    }
+    const idQuery = knex(tableName).select('id', 'cvr_id');
+    for (const col of Object.keys(allRows[0])) {
+      const values = allRows.map((row) => row[col]);
+      idQuery.whereIn(col, values);
+    }
+
+    const idMap = await idQuery;
     return Object.fromEntries(
       idMap.map(({ id, cvr_id: cvrId }) => [cvrId, id]),
     );
