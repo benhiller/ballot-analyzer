@@ -20,22 +20,32 @@ const importManifest = async (
   itemToRow,
   returnIdMap = true,
 ) => {
+  console.log(`Importing ${fileName}`);
   const manifestPath = path.join(dir, fileName);
-  const data = await fs.promises.readFile(manifestPath, 'utf8');
+  let data;
+  try {
+    data = await fs.promises.readFile(manifestPath, 'utf8');
+  } catch (err) {
+    console.log(`Couldn't read file ${fileName}`);
+    return {};
+  }
   const parsedData = JSON.parse(data);
   const rows = [];
   for (const item of parsedData.List) {
     const row = itemToRow(item);
+    if (!row) {
+      continue;
+    }
     if (electionId) {
       row.election_id = electionId;
     }
     rows.push(row);
   }
 
-  do {
+  while (rows.length > 0) {
     const rowsToInsert = rows.splice(0, CHUNK_SIZE);
     await knex.insert(rowsToInsert).into(tableName).onConflictDoNothing();
-  } while (rows.length > 0);
+  }
 
   if (returnIdMap) {
     const idMap = await knex(tableName).select('id', 'cvr_id');
@@ -133,10 +143,19 @@ const importBallotTypeContestAssocs = async (ballotTypeIdMap, contestIdMap) => {
   return importManifest(
     'BallotTypeContestManifest.json',
     'ballot_type_contest_assoc',
-    (item) => ({
-      ballot_type_id: ballotTypeIdMap[item.BallotTypeId],
-      contest_id: contestIdMap[item.ContestId],
-    }),
+    (item) => {
+      if (!contestIdMap[item.ContestId]) {
+        console.log(
+          `Invalid contest ID in BallotTypeContestManifest: ${item.ContestId}`,
+        );
+        return null;
+      }
+
+      return {
+        ballot_type_id: ballotTypeIdMap[item.BallotTypeId],
+        contest_id: contestIdMap[item.ContestId],
+      };
+    },
     false,
   );
 };
@@ -198,7 +217,7 @@ const importVotes = async (
   const fileCount = files.length;
   let filesProcessed = 0;
   for (const file of files) {
-    if (!file.startsWith('CvrExport_')) {
+    if (!file.startsWith('CvrExport')) {
       continue;
     }
 
@@ -227,8 +246,8 @@ const importVotes = async (
         precinct_portion_id: precinctPortionIdMap[vote.BallotTypeId],
       };
 
-      for (const card of vote.Cards) {
-        for (const contest of card.Contests) {
+      const processContests = (contests) => {
+        for (const contest of contests) {
           for (const mark of contest.Marks) {
             if (mark.IsVote) {
               rows.push({
@@ -239,13 +258,21 @@ const importVotes = async (
             }
           }
         }
+      };
+
+      if (vote.Cards) {
+        for (const card of vote.Cards) {
+          processContests(card.Contests);
+        }
+      } else {
+        processContests(vote.Contests);
       }
     }
 
     await knex.insert(rows).into('vote');
 
     filesProcessed += 1;
-    if (filesProcessed % 100 == 0) {
+    if (filesProcessed % 100 === 0) {
       console.log(`${filesProcessed} of ${fileCount} files processed`);
     }
   }
