@@ -4,7 +4,7 @@ export function capitalizeName(name) {
     .map((token) => {
       let capitalizedToken = '';
       let foundAlpha = false;
-      for (const [idx, char] of token.split('').entries()) {
+      for (const char of token.split('')) {
         if (!foundAlpha && /[a-z]/i.test(char)) {
           // Only set foundAlpha when we find an a-z char, so we capitalize the
           // first alphabetical character in nicknames like "Rocky"
@@ -19,13 +19,6 @@ export function capitalizeName(name) {
         }
       }
       return capitalizedToken;
-      if (token.length === 0) {
-        return token;
-      } else if (token.length === 1) {
-        return token.toUpperCase();
-      } else {
-        return token[0].toUpperCase() + token.slice(1).toLowerCase();
-      }
     })
     .join(' ');
 }

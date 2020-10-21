@@ -1,7 +1,7 @@
 import knex from 'src/knex';
 
 export async function getCandidates() {
-  const candidates = await knex('candidate')
+  return await knex('candidate')
     .select({
       candidate_id: 'candidate.id',
       candidate_name: 'candidate.name',
@@ -10,11 +10,11 @@ export async function getCandidates() {
     })
     .join('contest', 'contest.id', '=', 'candidate.contest_id')
     .groupBy('candidate.id', 'contest.id');
-
-  return candidates;
 }
 
-export async function getVotes(query) {
+export async function getPayload(query) {
+  const allCandidates = await getCandidates();
+
   let votesQuery = knex('vote')
     .select({
       candidate_id: 'candidate_id',
@@ -35,32 +35,16 @@ export async function getVotes(query) {
   }
 
   const votesByCandidate = await votesQuery;
-
-  const candidateToVotes = {};
-  for (const row of votesByCandidate) {
-    candidateToVotes[row.candidate_id] = parseInt(row.count);
-  }
-
-  const candidates = await knex('candidate')
-    .select({
-      candidate_id: 'candidate.id',
-      candidate_name: 'candidate.name',
-      contest_id: 'candidate.contest_id',
-      contest_name: 'contest.name',
-    })
-    .join('contest', 'contest.id', '=', 'candidate.contest_id')
-    .groupBy('candidate.id', 'contest.id');
-
-  for (const candidate of candidates) {
-    candidate.votes = candidateToVotes[candidate.candidate_id] || 0;
-  }
+  const candidateToVotes = Object.fromEntries(
+    votesByCandidate.map((row) => [row.candidate_id, parseInt(row.count)]),
+  );
 
   const contestToCandidateMap = {};
-  for (const candidate of candidates) {
+  for (const candidate of allCandidates) {
     const finalCandidate = {
       id: candidate.candidate_id,
       name: candidate.candidate_name,
-      votes: candidate.votes,
+      votes: candidateToVotes[candidate.candidate_id] || 0,
     };
     if (contestToCandidateMap[candidate.contest_id]) {
       contestToCandidateMap[candidate.contest_id].candidates.push(
@@ -75,9 +59,14 @@ export async function getVotes(query) {
     }
   }
 
-  return Object.values(contestToCandidateMap).filter(
+  const contestResults = Object.values(contestToCandidateMap).filter(
     (contest) =>
       contest.candidates.reduce((acc, candidate) => acc + candidate.votes, 0) >
       0,
   );
+
+  return {
+    allCandidates,
+    contestResults,
+  };
 }
