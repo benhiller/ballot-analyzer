@@ -1,6 +1,8 @@
 require('dotenv').config();
 
 const fs = require('fs');
+const es = require('event-stream');
+const JSONStream = require('JSONStream');
 const path = require('path');
 const { attachOnConflictDoNothing } = require('knex-on-conflict-do-nothing');
 
@@ -222,52 +224,73 @@ const importVotes = async (
     }
 
     const manifestPath = path.join(dir, file);
-    const data = await fs.promises.readFile(manifestPath, 'utf8');
-    const parsedData = JSON.parse(data);
+    let rows = [];
+    await new Promise((resolve, reject) => {
+      fs.createReadStream(manifestPath, { encoding: 'utf8' })
+        .pipe(JSONStream.parse('Sessions.*'))
+        .pipe(
+          es.mapSync((item) => {
+            const rows = [];
 
-    const rows = [];
-    for (const item of parsedData.Sessions) {
-      let vote;
-      if (item.Modified && item.Modified.IsCurrent) {
-        vote = item.Modified;
-      } else if (item.Original && item.Original.IsCurrent) {
-        vote = item.Original;
-      } else {
-        console.log('Uhoh');
-      }
-
-      const rowTemplate = {
-        election_id: electionId,
-        tabulator_id: item.TabulatorId,
-        batch_id: item.BatchId,
-        record_id: item.RecordId,
-        counting_group_id: countingGroupIdMap[item.CountingGroupId],
-        ballot_type_id: ballotTypeIdMap[vote.BallotTypeId],
-        precinct_portion_id: precinctPortionIdMap[vote.BallotTypeId],
-      };
-
-      const processContests = (contests) => {
-        for (const contest of contests) {
-          for (const mark of contest.Marks) {
-            if (mark.IsVote) {
-              rows.push({
-                ...rowTemplate,
-                candidate_id: candidateIdMap[mark.CandidateId],
-                rank: mark.Rank,
-              });
+            let vote;
+            if (item.Modified && item.Modified.IsCurrent) {
+              vote = item.Modified;
+            } else if (item.Original && item.Original.IsCurrent) {
+              vote = item.Original;
+            } else {
+              console.log('Uhoh');
             }
-          }
-        }
-      };
 
-      if (vote.Cards) {
-        for (const card of vote.Cards) {
-          processContests(card.Contests);
-        }
-      } else {
-        processContests(vote.Contests);
-      }
-    }
+            const rowTemplate = {
+              election_id: electionId,
+              tabulator_id: item.TabulatorId,
+              batch_id: item.BatchId,
+              record_id: item.RecordId,
+              counting_group_id: countingGroupIdMap[item.CountingGroupId],
+              ballot_type_id: ballotTypeIdMap[vote.BallotTypeId],
+              precinct_portion_id: precinctPortionIdMap[vote.BallotTypeId],
+            };
+
+            const processContests = (contests) => {
+              for (const contest of contests) {
+                for (const mark of contest.Marks) {
+                  if (mark.IsVote) {
+                    rows.push({
+                      ...rowTemplate,
+                      candidate_id: candidateIdMap[mark.CandidateId],
+                      rank: mark.Rank,
+                    });
+                  }
+                }
+              }
+            };
+
+            if (vote.Cards) {
+              for (const card of vote.Cards) {
+                processContests(card.Contests);
+              }
+            } else {
+              processContests(vote.Contests);
+            }
+
+            return rows;
+          }),
+        )
+        .pipe(
+          es.map(async (newRows, cb) => {
+            rows = rows.concat(newRows);
+            if (rows.length > CHUNK_SIZE) {
+              const rowsToInsert = rows;
+              rows = [];
+              await knex.insert(rowsToInsert).into('vote');
+              cb();
+            } else {
+              cb();
+            }
+          }),
+        )
+        .on('end', () => resolve());
+    });
 
     await knex.insert(rows).into('vote');
 
