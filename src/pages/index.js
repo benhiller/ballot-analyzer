@@ -4,17 +4,19 @@ import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
-import { getPayload } from 'src/data';
+import { getAllCandidates, getContestResults } from 'src/data';
 import { capitalizeName, humanReadableContest } from 'src/formatting';
 import Contest from 'src/components/Contest';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 export async function getServerSideProps({ query }) {
-  const initialData = await getPayload(query);
+  const initialContestResults = await getContestResults(query);
+  const initialAllCandidates = await getAllCandidates(query);
   return {
     props: {
-      initialData,
+      initialAllCandidates,
+      initialContestResults,
       initialQuery: JSON.stringify(query),
     },
   };
@@ -50,7 +52,11 @@ const useStyles = createUseStyles({
   },
 });
 
-function HomePage({ initialData, initialQuery }) {
+function HomePage({
+  initialContestResults,
+  initialAllCandidates,
+  initialQuery,
+}) {
   const classes = useStyles();
 
   const router = useRouter();
@@ -60,10 +66,24 @@ function HomePage({ initialData, initialQuery }) {
   );
 
   const queryString = new URLSearchParams(router.query).toString();
-  const { data } = useSWR(`/api/votes?${queryString}`, fetcher, {
+  const { data: contestResults } = useSWR(
+    `/api/contest_results?${queryString}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      initialData:
+        JSON.stringify(router.query) === initialQuery
+          ? initialContestResults
+          : null,
+    },
+  );
+
+  const { data: allCandidates } = useSWR(`/api/all_candidates`, fetcher, {
     revalidateOnFocus: false,
     initialData:
-      JSON.stringify(router.query) === initialQuery ? initialData : null,
+      JSON.stringify(router.query) === initialQuery
+        ? initialAllCandidates
+        : null,
   });
 
   const changeCandidateFilter = (candidateFilters) => {
@@ -83,8 +103,7 @@ function HomePage({ initialData, initialQuery }) {
   const selectedCandidateFilter = [];
   let groupedContests = [];
 
-  if (data) {
-    const { contestResults, allCandidates } = data;
+  if (contestResults) {
     groupedContests = contestResults.reduce((arr, contest) => {
       if (arr.length === 0) {
         arr.push([contest]);
@@ -95,14 +114,16 @@ function HomePage({ initialData, initialQuery }) {
       }
       return arr;
     }, []);
+  }
 
+  if (allCandidates) {
     for (const candidate of allCandidates) {
       const option = {
-        id: candidate.candidate_id,
+        id: candidate.id,
         label:
-          capitalizeName(candidate.candidate_name) +
+          capitalizeName(candidate.name) +
           ' (' +
-          humanReadableContest(candidate.contest_name) +
+          humanReadableContest(candidate.contest.name) +
           ')',
       };
 
