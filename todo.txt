@@ -4,3 +4,4 @@
 - RCV after rank 1 has IsVote = False. need to include that if we want to take 2nd, 3rd, etc choice into account
 - group options in candidate typeahead by contest?
 - allow filtering by votes across multiple races
+- show difference between results with filters vs unfiltered.
