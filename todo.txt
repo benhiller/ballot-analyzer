@@ -1,4 +1,5 @@
 - Make import-data support 2019 CVRExport (no Election manifest, single Cvr json file)
-- Can we identify how many ballots aren't included when a filter is applied?
+- Can we identify how many ballots aren't included when a filter is applied? aren't included vs under vote vs not on ballot?
 - Allow clicking on a candidate row to apply them as a filter?
 - Separate races by type? Group presidential primaries, house, state leg, props, etc?
+- RCV after rank 1 has IsVote = False. need to include that if we want to take 2nd, 3rd, etc choice into account

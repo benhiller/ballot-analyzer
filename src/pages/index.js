@@ -4,7 +4,7 @@ import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
-import { getAllCandidates, getContestResults } from 'src/data';
+import { getFilterPayload, getContestResults } from 'src/data';
 import { capitalizeName, humanReadableContest } from 'src/formatting';
 import Contest from 'src/components/Contest';
 
@@ -12,10 +12,10 @@ const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 export async function getServerSideProps({ query }) {
   const initialContestResults = await getContestResults(query);
-  const initialAllCandidates = await getAllCandidates(query);
+  const initialFilterPayload = await getFilterPayload();
   return {
     props: {
-      initialAllCandidates,
+      initialFilterPayload,
       initialContestResults,
       initialQuery: JSON.stringify(query),
     },
@@ -25,6 +25,17 @@ export async function getServerSideProps({ query }) {
 const useStyles = createUseStyles({
   container: {
     margin: '10px',
+  },
+  electionDropdown: {
+    'width': '300px',
+    'whiteSpace': 'nowrap',
+    'marginBottom': '15px',
+    '& span': {
+      marginRight: '5px',
+    },
+    '& select': {
+      width: 'auto',
+    },
   },
   filters: {
     marginBottom: '10px',
@@ -54,7 +65,7 @@ const useStyles = createUseStyles({
 
 function HomePage({
   initialContestResults,
-  initialAllCandidates,
+  initialFilterPayload,
   initialQuery,
 }) {
   const classes = useStyles();
@@ -63,6 +74,10 @@ function HomePage({
 
   const [candidateFilter, setCandidateFilter] = useState(
     router.query?.candidate || null,
+  );
+
+  const [selectedElection, setSelectedElection] = useState(
+    router.query?.election || initialFilterPayload.elections[0].id,
   );
 
   const queryString = new URLSearchParams(router.query).toString();
@@ -78,31 +93,15 @@ function HomePage({
     },
   );
 
-  const { data: allCandidates } = useSWR(`/api/all_candidates`, fetcher, {
+  const { data: filterPayload } = useSWR(`/api/filter_payload`, fetcher, {
     revalidateOnFocus: false,
     initialData:
       JSON.stringify(router.query) === initialQuery
-        ? initialAllCandidates
+        ? initialFilterPayload
         : null,
   });
 
-  const changeCandidateFilter = (candidateFilters) => {
-    const candidateFilter = candidateFilters[0];
-    if (candidateFilter) {
-      setCandidateFilter(candidateFilter.id);
-      router.push(`/?candidate=${candidateFilter.id}`, undefined, {
-        shallow: true,
-      });
-    } else {
-      setCandidateFilter(null);
-      router.push(`/`, undefined, { shallow: true });
-    }
-  };
-
-  const candidateOptions = [];
-  const selectedCandidateFilter = [];
   let groupedContests = [];
-
   if (contestResults) {
     groupedContests = contestResults.reduce((arr, contest) => {
       if (arr.length === 0) {
@@ -116,8 +115,16 @@ function HomePage({
     }, []);
   }
 
-  if (allCandidates) {
-    for (const candidate of allCandidates) {
+  const candidateOptions = [];
+  const selectedCandidateFilter = [];
+  let elections = [];
+  if (filterPayload) {
+    elections = filterPayload.elections;
+    for (const candidate of filterPayload.candidates) {
+      if (candidate.electionId !== selectedElection) {
+        continue;
+      }
+
       const option = {
         id: candidate.id,
         label:
@@ -134,9 +141,68 @@ function HomePage({
     }
   }
 
+  const updateUrl = (selectedElection, candidateFilter) => {
+    console.log(selectedElection, candidateFilter);
+    const urlQuery = {};
+    if (candidateFilter) {
+      urlQuery.candidate = candidateFilter;
+    }
+
+    if (selectedElection !== filterPayload.elections[0].id) {
+      urlQuery.election = selectedElection;
+    }
+
+    const queryString = new URLSearchParams(urlQuery).toString();
+    if (Object.keys(urlQuery).length > 0) {
+      router.push(`/?${queryString}`, undefined, { shallow: true });
+    } else {
+      router.push(`/`, undefined, { shallow: true });
+    }
+  };
+
+  const changeCandidateFilter = (candidateFilters) => {
+    const candidateFilter = candidateFilters[0];
+    if (candidateFilter) {
+      setCandidateFilter(candidateFilter.id);
+      router.push(`/?candidate=${candidateFilter.id}`, undefined, {
+        shallow: true,
+      });
+    } else {
+      setCandidateFilter(null);
+      router.push(`/`, undefined, { shallow: true });
+    }
+
+    updateUrl(selectedElection, candidateFilter?.id);
+  };
+
+  const changeElection = (e) => {
+    const electionId = e.target.value;
+    if (electionId === selectedElection) {
+      return;
+    }
+
+    setSelectedElection(electionId);
+    setCandidateFilter(null);
+    updateUrl(electionId, null);
+  };
+
   return (
     <div className={classes.container}>
       <h1>San Francisco Election Results</h1>
+      <div className={classes.electionDropdown}>
+        <span>Election:</span>
+        <select
+          className="custom-select"
+          value={selectedElection}
+          onChange={changeElection}
+        >
+          {elections.map((election) => (
+            <option key={election.id} value={election.id}>
+              {election.name}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className={classes.filters}>
         <span className={classes.typeaheadLabel}>People who voted for</span>
         <Typeahead

@@ -1,9 +1,9 @@
-import { getAllCandidates } from 'src/data';
+import { getFilterPayload } from 'src/data';
 
 export default async function handler(req, res) {
-  const response = await getAllCandidates();
+  const payload = await getFilterPayload();
 
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.json(response);
+  res.json(payload);
 }

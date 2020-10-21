@@ -3,6 +3,7 @@ import knex from 'src/knex';
 export async function getAllCandidates() {
   const candidates = await knex('candidate')
     .select({
+      election_id: 'candidate.election_id',
       candidate_id: 'candidate.id',
       candidate_name: 'candidate.name',
       contest_id: 'candidate.contest_id',
@@ -14,6 +15,7 @@ export async function getAllCandidates() {
   return candidates.map((candidate) => ({
     id: candidate.candidate_id.toString(),
     name: candidate.candidate_name,
+    electionId: candidate.election_id.toString(),
     contest: {
       id: candidate.contest_id.toString(),
       name: candidate.contest_name,
@@ -21,14 +23,42 @@ export async function getAllCandidates() {
   }));
 }
 
+export async function getAllElections() {
+  const elections = await knex('election')
+    .select({
+      election_id: 'election.id',
+      election_name: 'election.name',
+      election_date: 'election.date',
+    })
+    .orderBy('id', 'asc');
+
+  return elections.map((election) => ({
+    id: election.election_id.toString(),
+    name: election.election_name,
+    date: election.election_date,
+  }));
+}
+
+export async function getFilterPayload() {
+  const candidates = await getAllCandidates();
+  const elections = await getAllElections();
+  return { candidates, elections };
+}
+
 export async function getContestResults(query) {
   const allCandidates = await getAllCandidates();
+  let electionId = query.election;
+  if (!electionId) {
+    const elections = await getAllElections();
+    electionId = elections[0].id;
+  }
 
   let votesQuery = knex('vote')
     .select({
       candidate_id: 'candidate_id',
     })
     .count()
+    .where('election_id', electionId)
     .groupBy('candidate_id');
 
   if (query.candidate) {
