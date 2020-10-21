@@ -208,11 +208,12 @@ function HomePage({
         <Typeahead
           id="candidate-filter-typeahead"
           className={classes.typeahead}
-          onChange={changeCandidateFilter}
-          options={candidateOptions}
           placeholder="anyone"
-          positionFixed
+          options={candidateOptions}
           selected={selectedCandidateFilter}
+          onChange={changeCandidateFilter}
+          positionFixed
+          clearButton
         />
       </div>
       {groupedContests.map((contests, idx) => (
