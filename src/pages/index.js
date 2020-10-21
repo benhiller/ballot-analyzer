@@ -120,7 +120,22 @@ function HomePage({
   let elections = [];
   if (filterPayload) {
     elections = filterPayload.elections;
-    for (const candidate of filterPayload.candidates) {
+    const candidates = [...filterPayload.candidates];
+    candidates.sort((c1, c2) => {
+      const contestCmp = c1.contest.id - c2.contest.id;
+      if (contestCmp !== 0) {
+        return contestCmp;
+      }
+
+      if (c1.name === 'Write-in' && c2 !== 'Write-in') {
+        return 1;
+      } else if (c1.name !== 'Write-in' && c2 === 'Write-in') {
+        return -1;
+      } else {
+        return c1.name.localeCompare(c2.name);
+      }
+    });
+    for (const candidate of candidates) {
       if (candidate.electionId !== selectedElection) {
         continue;
       }
