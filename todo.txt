@@ -5,3 +5,4 @@
 - group options in candidate typeahead by contest?
 - allow filtering by votes across multiple races
 - show difference between results with filters vs unfiltered.
+- handle invalid election id in URL. maybe use election date instead? or just use default election instead
