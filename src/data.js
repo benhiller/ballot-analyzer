@@ -61,15 +61,39 @@ export async function getContestResults(query) {
     .where('election_id', electionId)
     .groupBy('candidate_id');
 
-  if (query.candidate) {
-    votesQuery = votesQuery.whereExists(
+  const applyCandidateFilter = (query, candidateId) => {
+    return query.whereExists(
       knex
         .select('id')
         .from('vote AS inner_vote')
         .whereRaw(
           'vote.tabulator_id = inner_vote.tabulator_id AND vote.batch_id = inner_vote.batch_id AND vote.record_id = inner_vote.record_id AND inner_vote.candidate_id = ?',
-          [query.candidate],
+          [candidateId],
         ),
+    );
+  };
+
+  if (query.candidate) {
+    votesQuery = applyCandidateFilter(votesQuery, query.candidate);
+  }
+
+  let contestsToVotes = {};
+  if (query.candidate) {
+    const distinctVotes = await applyCandidateFilter(
+      knex('vote')
+        .count(knex.raw('DISTINCT(tabulator_id, batch_id, record_id)'), {
+          as: 'distinct_votes',
+        })
+        .select('contest_id')
+        .where('election_id', electionId)
+        .groupBy('contest_id'),
+      query.candidate,
+    );
+    contestsToVotes = Object.fromEntries(
+      distinctVotes.map((row) => [
+        row.contest_id.toString(),
+        parseInt(row.count),
+      ]),
     );
   }
 
@@ -95,6 +119,7 @@ export async function getContestResults(query) {
     } else {
       contestToCandidateMap[candidate.contest.id] = {
         ...candidate.contest,
+        distinctVotes: contestsToVotes[candidate.contest.id],
         candidates: [finalCandidate],
       };
     }

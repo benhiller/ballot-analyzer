@@ -108,6 +108,7 @@ function HomePage({
   });
 
   let groupedContests = [];
+  let totalVotesForFilteredCandidate = 0;
   if (contestResults) {
     groupedContests = contestResults.reduce((arr, contest) => {
       if (arr.length === 0) {
@@ -119,6 +120,13 @@ function HomePage({
       }
       return arr;
     }, []);
+    totalVotesForFilteredCandidate = candidateFilter
+      ? contestResults.find((contest) =>
+          contest.candidates.find(
+            (candidate) => candidate.id === candidateFilter,
+          ),
+        ).distinctVotes
+      : 0;
   }
 
   const candidateOptions = [];
@@ -163,7 +171,6 @@ function HomePage({
   }
 
   const updateUrl = (selectedElection, candidateFilter) => {
-    console.log(selectedElection, candidateFilter);
     const urlQuery = {};
     if (candidateFilter) {
       urlQuery.candidate = candidateFilter;
@@ -244,7 +251,10 @@ function HomePage({
         <div key={idx} className={classes.row}>
           {contests.map((contest) => (
             <div key={contest.id} className={classes.contest}>
-              <Contest contest={contest} />
+              <Contest
+                contest={contest}
+                totalVotesForFilteredCandidate={totalVotesForFilteredCandidate}
+              />
             </div>
           ))}
         </div>

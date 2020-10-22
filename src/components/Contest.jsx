@@ -11,18 +11,28 @@ const useStyles = createUseStyles({
   },
 });
 
-const Contest = ({ contest }) => {
-  const { candidates } = contest;
+const Contest = ({ contest, totalVotesForFilteredCandidate }) => {
+  const candidates = [...contest.candidates];
 
   const classes = useStyles();
 
   const [showAllCandidates, setShowAllCandidates] = useState(false);
 
-  candidates.sort((c1, c2) => c2.votes - c1.votes);
   const totalVotes = candidates.reduce(
     (acc, candidate) => acc + candidate.votes,
     0,
   );
+  const unknownVotes = totalVotesForFilteredCandidate - contest.distinctVotes;
+  if (unknownVotes > 0) {
+    candidates.push({
+      id: 'unknown',
+      name: 'Unknown',
+      votes: unknownVotes,
+    });
+  }
+
+  candidates.sort((c1, c2) => c2.votes - c1.votes);
+
   const visibleCandidates = showAllCandidates
     ? candidates
     : candidates.slice(0, 5);
