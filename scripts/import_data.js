@@ -205,6 +205,8 @@ const importVotes = async (
     'ballot_type',
     'precinct_portion',
     'election',
+    'contest',
+    'party',
   ];
   for (const fk of foreignKeyConstraints) {
     try {
@@ -218,6 +220,8 @@ const importVotes = async (
     'counting_group_id',
     'election_id',
     'precinct_portion_id',
+    'contest_id',
+    'party_id',
   ];
   for (const idx of indexes) {
     try {
@@ -268,6 +272,9 @@ const importVotes = async (
                     rows.push({
                       ...rowTemplate,
                       candidate_id: candidateIdMap[mark.CandidateId],
+                      contest_id: contestIdMap[contest.Id],
+                      // TODO: Sometimes undefined, for write-ins. Make sure we are handling that properly
+                      party_id: partyIdMap[mark.PartyId],
                       rank: mark.Rank,
                     });
                   }

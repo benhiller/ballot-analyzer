@@ -145,6 +145,8 @@ exports.up = function (knex) {
       table.integer('ballot_type_id').unsigned().notNullable();
       table.integer('counting_group_id').unsigned().notNullable();
       table.integer('candidate_id').unsigned().notNullable();
+      table.integer('contest_id').unsigned().notNullable();
+      table.integer('party_id').unsigned();
       table.integer('rank');
 
       table.foreign('election_id').references('id').inTable('election');
@@ -161,6 +163,12 @@ exports.up = function (knex) {
 
       table.foreign('candidate_id').references('id').inTable('candidate');
       table.index('candidate_id');
+
+      table.foreign('contest_id').references('id').inTable('contest');
+      table.index('contest_id');
+
+      table.foreign('party_id').references('id').inTable('party');
+      table.index('party_id');
 
       table
         .foreign('counting_group_id')
