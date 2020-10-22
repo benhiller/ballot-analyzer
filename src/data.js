@@ -119,7 +119,7 @@ export async function getContestResults(query) {
     } else {
       contestToCandidateMap[candidate.contest.id] = {
         ...candidate.contest,
-        distinctVotes: contestsToVotes[candidate.contest.id],
+        distinctVotes: contestsToVotes[candidate.contest.id] || null,
         candidates: [finalCandidate],
       };
     }
