@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import useSWR from 'swr';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
@@ -23,10 +24,15 @@ export async function getServerSideProps({ query }) {
 }
 
 const useStyles = createUseStyles({
-  container: {
+  '@global': {
+    body: {
+      fontFamily: 'Inter, Helvetica, sans-serif',
+    },
+  },
+  'container': {
     margin: '10px',
   },
-  electionDropdown: {
+  'electionDropdown': {
     'width': '300px',
     'whiteSpace': 'nowrap',
     'marginBottom': '15px',
@@ -37,24 +43,24 @@ const useStyles = createUseStyles({
       width: 'auto',
     },
   },
-  filters: {
+  'filters': {
     marginBottom: '10px',
   },
-  typeaheadLabel: {
+  'typeaheadLabel': {
     marginRight: '5px',
   },
-  typeahead: {
+  'typeahead': {
     'display': 'inline-block',
     'width': '300px',
     '& .rbt-menu': {
       width: '450px !important',
     },
   },
-  row: {
+  'row': {
     display: 'flex',
     flexDirection: 'row',
   },
-  contest: {
+  'contest': {
     flex: 1,
     border: '1px solid #ccc',
     margin: '10px',
@@ -203,6 +209,13 @@ function HomePage({
 
   return (
     <div className={classes.container}>
+      <Head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Inter"
+        />
+        <title>SF Election Analyzer</title>
+      </Head>
       <h1>San Francisco Election Results</h1>
       <div className={classes.electionDropdown}>
         <span>Election:</span>
