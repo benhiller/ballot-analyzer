@@ -31,7 +31,7 @@ const Contest = ({ contest }) => {
       <div className={classes.header}>
         <div>{humanReadableContest(contest.name)}</div>
         <div>
-          {visibleCandidates.length != candidates.length && (
+          {visibleCandidates.length !== candidates.length && (
             <a onClick={() => setShowAllCandidates(true)}>+ Show All</a>
           )}
           {showAllCandidates && (
