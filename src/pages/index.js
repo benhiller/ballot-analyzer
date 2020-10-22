@@ -185,12 +185,8 @@ function HomePage({
     const candidateFilter = candidateFilters[0];
     if (candidateFilter) {
       setCandidateFilter(candidateFilter.id);
-      router.push(`/?candidate=${candidateFilter.id}`, undefined, {
-        shallow: true,
-      });
     } else {
       setCandidateFilter(null);
-      router.push(`/`, undefined, { shallow: true });
     }
 
     updateUrl(selectedElection, candidateFilter?.id);
