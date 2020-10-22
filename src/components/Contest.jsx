@@ -4,10 +4,40 @@ import { createUseStyles } from 'react-jss';
 import { capitalizeName, humanReadableContest } from 'src/formatting';
 
 const useStyles = createUseStyles({
-  candidate: {},
   header: {
     display: 'flex',
     justifyContent: 'space-between',
+    marginBottom: '5px',
+    paddingBottom: '5px',
+    borderBottom: '1px solid #eee',
+  },
+  resultsTable: {
+    'tableLayout': 'fixed',
+    'width': '100%',
+    '& tr': {},
+    'whiteSpace': 'nowrap',
+  },
+  candidateCol: {
+    width: '25%',
+  },
+  votesCol: {
+    width: '15%',
+    textAlign: 'right',
+    color: '#888',
+  },
+  pctCol: {
+    width: '10%',
+    textAlign: 'right',
+    paddingLeft: '25px',
+  },
+  pctBarCol: {
+    width: '30%',
+    paddingLeft: '5px',
+  },
+  pctBar: {
+    height: '24px',
+    backgroundColor: '#389',
+    display: 'inline-block',
   },
 });
 
@@ -49,14 +79,39 @@ const Contest = ({ contest, totalVotesForFilteredCandidate }) => {
           )}
         </div>
       </div>
-      <ul>
-        {visibleCandidates.map((candidate) => (
-          <li key={candidate.id} className={classes.candidate}>
-            {capitalizeName(candidate.name)} ({candidate.votes}){' '}
-            {((candidate.votes / totalVotes) * 100).toFixed(2)}%
-          </li>
-        ))}
-      </ul>
+      <table className={classes.resultsTable}>
+        <tbody>
+          {visibleCandidates.map((candidate) => (
+            <tr key={candidate.id}>
+              <td className={classes.candidateCol}>
+                {capitalizeName(candidate.name)}
+              </td>
+              <td className={classes.votesCol}>{candidate.votes}</td>
+              <td className={classes.pctCol}>
+                {candidate.id === 'unknown'
+                  ? '-'
+                  : `${((candidate.votes / totalVotes) * 100).toFixed(1)}%`}
+              </td>
+              <td className={classes.pctBarCol}>
+                {candidate.id === 'unknown' ? (
+                  <div />
+                ) : (
+                  <div
+                    style={{
+                      width: `${((candidate.votes / totalVotes) * 100).toFixed(
+                        1,
+                      )}%`,
+                    }}
+                    className={classes.pctBar}
+                  >
+                    {' '}
+                  </div>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
