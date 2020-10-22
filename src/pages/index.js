@@ -111,16 +111,24 @@ function HomePage({
   let groupedContests = [];
   let totalVotesForFilteredCandidate = 0;
   if (contestResults) {
-    groupedContests = contestResults.reduce((arr, contest) => {
-      if (arr.length === 0) {
-        arr.push([contest]);
-      } else if (arr[arr.length - 1].length === 2) {
-        arr.push([contest]);
-      } else {
-        arr[arr.length - 1].push(contest);
-      }
-      return arr;
-    }, []);
+    groupedContests = contestResults
+      .filter(
+        (contest) =>
+          !candidateFilter ||
+          contest.candidates.findIndex(
+            (candidate) => candidate.id === candidateFilter,
+          ) === -1,
+      )
+      .reduce((arr, contest) => {
+        if (arr.length === 0) {
+          arr.push([contest]);
+        } else if (arr[arr.length - 1].length === 2) {
+          arr.push([contest]);
+        } else {
+          arr[arr.length - 1].push(contest);
+        }
+        return arr;
+      }, []);
     totalVotesForFilteredCandidate = candidateFilter
       ? contestResults.find((contest) =>
           contest.candidates.find(
