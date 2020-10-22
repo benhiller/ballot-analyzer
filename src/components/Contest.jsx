@@ -86,7 +86,9 @@ const Contest = ({ contest, totalVotesForFilteredCandidate }) => {
               <td className={classes.candidateCol}>
                 {capitalizeName(candidate.name)}
               </td>
-              <td className={classes.votesCol}>{candidate.votes}</td>
+              <td className={classes.votesCol}>
+                {candidate.votes.toLocaleString()}
+              </td>
               <td className={classes.pctCol}>
                 {candidate.id === 'unknown'
                   ? '-'
