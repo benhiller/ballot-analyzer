@@ -4,6 +4,13 @@ import { createUseStyles } from 'react-jss';
 import { capitalizeName, humanReadableContest } from 'src/formatting';
 
 const useStyles = createUseStyles({
+  container: {
+    padding: '10px',
+    border: '1px solid #ccc',
+    margin: '10px',
+    borderRadius: '3px',
+    height: 'calc(100% - 20px)',
+  },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -43,7 +50,9 @@ const useStyles = createUseStyles({
 });
 
 const Contest = ({ contest, totalVotesForFilteredCandidate }) => {
-  const candidates = [...contest.candidates];
+  // filter is important, without it we'd need to do array spread to ensure
+  // sort doesn't mutate candidates
+  const candidates = contest.candidates.filter((c) => c.votes !== 0);
 
   const classes = useStyles();
 
@@ -68,7 +77,7 @@ const Contest = ({ contest, totalVotesForFilteredCandidate }) => {
     ? candidates
     : candidates.slice(0, 5);
   return (
-    <div>
+    <div className={classes.container}>
       <div className={classes.header}>
         <div>{humanReadableContest(contest.name)}</div>
         <div>

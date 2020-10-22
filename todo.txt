@@ -7,4 +7,3 @@
 - show difference between results with filters vs unfiltered.
 - handle invalid election id in URL. maybe use election date instead? or just use default election instead
 - only hide contest with filtered candidate if numVotes for contest is 1! otherwise results are interesting
-- filter out candidates with 0 votes

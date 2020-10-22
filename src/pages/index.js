@@ -62,11 +62,7 @@ const useStyles = createUseStyles({
     flexDirection: 'row',
   },
   'contest': {
-    flex: 1,
-    border: '1px solid #ccc',
-    margin: '10px',
-    padding: '10px',
-    borderRadius: '3px',
+    flex: '0.5 1 0%',
   },
 });
 
