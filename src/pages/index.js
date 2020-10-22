@@ -8,6 +8,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import { getFilterPayload, getContestResults } from 'src/data';
 import { capitalizeName, humanReadableContest } from 'src/formatting';
 import Contest from 'src/components/Contest';
+import Spinner from 'src/components/Spinner';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
@@ -247,6 +248,7 @@ function HomePage({
           clearButton
         />
       </div>
+      {!groupedContests.length && <Spinner />}
       {groupedContests.map((contests, idx) => (
         <div key={idx} className={classes.row}>
           {contests.map((contest) => (
