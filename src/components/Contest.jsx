@@ -12,10 +12,11 @@ const useStyles = createUseStyles({
     borderBottom: '1px solid #eee',
   },
   resultsTable: {
-    'tableLayout': 'fixed',
-    'width': '100%',
-    '& tr': {},
-    'whiteSpace': 'nowrap',
+    tableLayout: 'fixed',
+    width: '100%',
+    whiteSpace: 'nowrap',
+    borderSpacing: '0 5px',
+    borderCollapse: 'separate',
   },
   candidateCol: {
     width: '25%',
@@ -31,13 +32,13 @@ const useStyles = createUseStyles({
     paddingLeft: '25px',
   },
   pctBarCol: {
-    width: '30%',
+    width: '15%',
     paddingLeft: '5px',
   },
   pctBar: {
     height: '24px',
     backgroundColor: '#389',
-    display: 'inline-block',
+    display: 'block',
   },
 });
 
