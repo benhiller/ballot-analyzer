@@ -80,15 +80,16 @@ const Contest = ({
 
   const totalVotes = computeTotalVotes(candidates);
   const unknownVotes = totalVotesForFilteredCandidate - contest.distinctVotes;
+
+  candidates.sort((c1, c2) => c2.votes - c1.votes);
+
   if (unknownVotes > 0) {
-    candidates.push({
+    candidates.unshift({
       id: 'unknown',
       name: 'Unknown',
       votes: unknownVotes,
     });
   }
-
-  candidates.sort((c1, c2) => c2.votes - c1.votes);
 
   const visibleCandidates = showAllCandidates
     ? candidates
