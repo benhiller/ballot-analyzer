@@ -3,11 +3,10 @@ import { createUseStyles } from 'react-jss';
 import useSWR from 'swr';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { Typeahead } from 'react-bootstrap-typeahead';
 
 import { getFilterPayload, getContestResults } from 'src/data';
-import { capitalizeName, humanReadableContest } from 'src/formatting';
 import { getUniversalQueryParams, hasFiltersApplied } from 'src/parameters';
+import FilterControls from 'src/components/FilterControls';
 import Contest from 'src/components/Contest';
 import Spinner from 'src/components/Spinner';
 
@@ -39,30 +38,6 @@ const useStyles = createUseStyles({
   },
   'container': {
     margin: '10px',
-  },
-  'electionDropdown': {
-    'width': '300px',
-    'whiteSpace': 'nowrap',
-    'marginBottom': '15px',
-    '& span': {
-      marginRight: '5px',
-    },
-    '& select': {
-      width: 'auto',
-    },
-  },
-  'filters': {
-    marginBottom: '10px',
-  },
-  'typeaheadLabel': {
-    marginRight: '5px',
-  },
-  'typeahead': {
-    'display': 'inline-block',
-    'width': '300px',
-    '& .rbt-menu': {
-      width: '450px !important',
-    },
   },
   'row': {
     display: 'flex',
@@ -162,47 +137,6 @@ function HomePage({
       : 0;
   }
 
-  const candidateOptions = [];
-  const selectedCandidateFilter = [];
-  let elections = [];
-  if (filterPayload) {
-    elections = filterPayload.elections;
-    const candidates = [...filterPayload.candidates];
-    candidates.sort((c1, c2) => {
-      const contestCmp = c1.contest.id - c2.contest.id;
-      if (contestCmp !== 0) {
-        return contestCmp;
-      }
-
-      if (c1.name === 'Write-in' && c2 !== 'Write-in') {
-        return 1;
-      } else if (c1.name !== 'Write-in' && c2 === 'Write-in') {
-        return -1;
-      } else {
-        return c1.name.localeCompare(c2.name);
-      }
-    });
-    for (const candidate of candidates) {
-      if (candidate.electionId !== selectedElection) {
-        continue;
-      }
-
-      const option = {
-        id: candidate.id,
-        label:
-          capitalizeName(candidate.name) +
-          ' (' +
-          humanReadableContest(candidate.contest.name) +
-          ')',
-      };
-
-      candidateOptions.push(option);
-      if (option.id === candidateFilter) {
-        selectedCandidateFilter.push(option);
-      }
-    }
-  }
-
   const updateUrl = (selectedElection, candidateFilter) => {
     const urlQuery = {};
     if (candidateFilter) {
@@ -221,18 +155,17 @@ function HomePage({
     }
   };
 
-  const changeCandidateFilter = (candidateFilters) => {
-    const candidateFilter = candidateFilters[0];
+  const handleCandidateFilterChange = (candidateFilter) => {
     if (candidateFilter) {
-      setCandidateFilter(candidateFilter.id);
+      setCandidateFilter(candidateFilter);
     } else {
       setCandidateFilter(null);
     }
 
-    updateUrl(selectedElection, candidateFilter?.id);
+    updateUrl(selectedElection, candidateFilter);
   };
 
-  const changeElection = (e) => {
+  const handleElectionChange = (e) => {
     const electionId = e.target.value;
     if (electionId === selectedElection) {
       return;
@@ -253,33 +186,13 @@ function HomePage({
         <title>SF Election Analyzer</title>
       </Head>
       <h1>San Francisco Election Results</h1>
-      <div className={classes.electionDropdown}>
-        <span>Election:</span>
-        <select
-          className="custom-select"
-          value={selectedElection}
-          onChange={changeElection}
-        >
-          {elections.map((election) => (
-            <option key={election.id} value={election.id}>
-              {election.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div className={classes.filters}>
-        <span className={classes.typeaheadLabel}>People who voted for</span>
-        <Typeahead
-          id="candidate-filter-typeahead"
-          className={classes.typeahead}
-          placeholder="anyone"
-          options={candidateOptions}
-          selected={selectedCandidateFilter}
-          onChange={changeCandidateFilter}
-          positionFixed
-          clearButton
-        />
-      </div>
+      <FilterControls
+        filterPayload={filterPayload}
+        selectedElection={selectedElection}
+        candidateFilter={candidateFilter}
+        onChangeCandidateFilter={handleCandidateFilterChange}
+        onChangeElection={handleElectionChange}
+      />
       {!groupedContests.length && <Spinner />}
       {groupedContests.map((contests, idx) => (
         <div key={idx} className={classes.row}>
