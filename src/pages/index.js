@@ -12,14 +12,28 @@ import Spinner from 'src/components/Spinner';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
+const getUniversalQueryParams = (query) => {
+  return query.election ? { election: query.election } : {};
+};
+
+const hasFiltersApplied = (query) => {
+  return !!query.candidate;
+};
+
 export async function getServerSideProps({ query }) {
-  const initialContestResults = await getContestResults(query);
+  const initialUnfilteredContestResults = await getContestResults(
+    getUniversalQueryParams(query),
+  );
+  const initialFilteredContestResults = hasFiltersApplied(query)
+    ? await getContestResults(query)
+    : null;
   const initialFilterPayload = await getFilterPayload();
   return {
     props: {
       initialFilterPayload,
-      initialContestResults,
-      initialQuery: JSON.stringify(query),
+      initialUnfilteredContestResults,
+      initialFilteredContestResults,
+      initialQuery: query,
     },
   };
 }
@@ -67,7 +81,8 @@ const useStyles = createUseStyles({
 });
 
 function HomePage({
-  initialContestResults,
+  initialUnfilteredContestResults,
+  initialFilteredContestResults,
   initialFilterPayload,
   initialQuery,
 }) {
@@ -83,15 +98,33 @@ function HomePage({
     router.query?.election || initialFilterPayload.elections[0].id,
   );
 
-  const queryString = new URLSearchParams(router.query).toString();
-  const { data: contestResults } = useSWR(
-    `/api/contest_results?${queryString}`,
+  const unfilteredQueryString = new URLSearchParams(
+    getUniversalQueryParams(router.query),
+  ).toString();
+  const { data: unfilteredContestResults } = useSWR(
+    `/api/contest_results?${unfilteredQueryString}`,
     fetcher,
     {
       revalidateOnFocus: false,
       initialData:
-        JSON.stringify(router.query) === initialQuery
-          ? initialContestResults
+        JSON.stringify(getUniversalQueryParams(router.query)) ===
+        JSON.stringify(getUniversalQueryParams(initialQuery))
+          ? initialUnfilteredContestResults
+          : null,
+    },
+  );
+
+  const queryString = new URLSearchParams(router.query).toString();
+  const { data: filteredContestResults } = useSWR(
+    hasFiltersApplied(router.query)
+      ? `/api/contest_results?${queryString}`
+      : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      initialData:
+        JSON.stringify(router.query) === JSON.stringify(initialQuery)
+          ? initialFilteredContestResults
           : null,
     },
   );
@@ -99,13 +132,16 @@ function HomePage({
   const { data: filterPayload } = useSWR(`/api/filter_payload`, fetcher, {
     revalidateOnFocus: false,
     initialData:
-      JSON.stringify(router.query) === initialQuery
+      JSON.stringify(router.query) === JSON.stringify(initialQuery)
         ? initialFilterPayload
         : null,
   });
 
   let groupedContests = [];
   let totalVotesForFilteredCandidate = 0;
+  const contestResults = hasFiltersApplied(router.query)
+    ? filteredContestResults
+    : unfilteredContestResults;
   if (contestResults) {
     groupedContests = contestResults
       .filter(
