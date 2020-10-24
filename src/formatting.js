@@ -10,7 +10,7 @@ export function capitalizeName(name) {
           // first alphabetical character in nicknames like "Rocky"
           capitalizedToken += char.toUpperCase();
           foundAlpha = true;
-        } else if (char === '.' || char === "'") {
+        } else if (char === '.' || char === "'" || char === '-') {
           // Reset foundAlpha to handle names like J.R. or O'Meara
           foundAlpha = false;
           capitalizedToken += char.toLowerCase();
