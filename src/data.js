@@ -8,6 +8,7 @@ export async function getAllCandidates() {
       candidate_name: 'candidate.name',
       contest_id: 'candidate.contest_id',
       contest_name: 'contest.name',
+      contest_num_votes: 'contest.num_votes',
     })
     .join('contest', 'contest.id', '=', 'candidate.contest_id')
     .groupBy('candidate.id', 'contest.id');
@@ -19,6 +20,7 @@ export async function getAllCandidates() {
     contest: {
       id: candidate.contest_id.toString(),
       name: candidate.contest_name,
+      numVotes: candidate.contest_num_votes,
     },
   }));
 }
