@@ -5,8 +5,17 @@ import classNames from 'classnames';
 const useStyles = createUseStyles({
   pctChange: {
     display: 'inline-block',
-    width: '80px',
   },
+  singleDigitPctChange: {
+    width: '55px',
+  },
+  doubleDigitPctChange: {
+    width: '65px',
+  },
+  tripleDigitPctChange: {
+    width: '75px',
+  },
+
   pctIncrease: {
     color: '#4fb061',
   },
@@ -19,6 +28,7 @@ const CandidatePercent = ({
   candidate,
   totalVotes,
   unfilteredTotalVotes,
+  maxPercentChange,
   hasFiltersApplied,
 }) => {
   const classes = useStyles();
@@ -38,7 +48,7 @@ const CandidatePercent = ({
     changePrefix = '\u2193';
   }
   const formattedChange =
-    '(' + changePrefix + (Math.abs(percentChange) * 100).toFixed(1) + '%)';
+    '(' + changePrefix + (Math.abs(percentChange) * 100).toFixed(1) + ')';
 
   return (
     <>
@@ -46,6 +56,10 @@ const CandidatePercent = ({
       {hasFiltersApplied && candidate.id !== 'unknown' && (
         <span
           className={classNames(classes.pctChange, {
+            [classes.singleDigitPctChange]: maxPercentChange < 0.1,
+            [classes.doubleDigitPctChange]:
+              maxPercentChange >= 0.1 && maxPercentChange < 1.0,
+            [classes.tripleDigitPctChange]: maxPercentChange === 1.0,
             [classes.pctIncrease]: percentChange > 0,
             [classes.pctDecrease]: percentChange < 0,
           })}

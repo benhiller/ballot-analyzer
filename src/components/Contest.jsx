@@ -26,9 +26,7 @@ const useStyles = createUseStyles({
   },
   paginationToggle: {
     'color': '#888',
-    'fontVariant': 'all-small-caps',
-    'position': 'relative',
-    'top': '-4px',
+    'fontSize': '14px',
     '&:hover': {
       color: '#555',
       cursor: 'pointer',
@@ -99,6 +97,19 @@ const Contest = ({
 
   candidates.sort((c1, c2) => c2.votes - c1.votes);
 
+  let maxPercentChange = 0.0;
+  if (hasFiltersApplied) {
+    for (const candidate of contest.candidates) {
+      const candidatePercent = candidate.votes / totalVotes;
+      const unfilteredPercent =
+        candidate.unfilteredVotes / contest.unfilteredTotalVotes;
+      const percentChange = Math.abs(candidatePercent - unfilteredPercent);
+      if (percentChange >= maxPercentChange) {
+        maxPercentChange = percentChange;
+      }
+    }
+  }
+
   if (unknownVotes > 0) {
     candidates.unshift({
       id: 'unknown',
@@ -147,6 +158,7 @@ const Contest = ({
                   candidate={candidate}
                   totalVotes={totalVotes}
                   unfilteredTotalVotes={contest.unfilteredTotalVotes}
+                  maxPercentChange={maxPercentChange}
                   hasFiltersApplied={hasFiltersApplied}
                 />
               </td>
