@@ -7,20 +7,13 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 
 import { getFilterPayload, getContestResults } from 'src/data';
 import { capitalizeName, humanReadableContest } from 'src/formatting';
+import { getUniversalQueryParams, hasFiltersApplied } from 'src/parameters';
 import Contest from 'src/components/Contest';
 import Spinner from 'src/components/Spinner';
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
-const getUniversalQueryParams = (query) => {
-  return query.election ? { election: query.election } : {};
-};
-
-const hasFiltersApplied = (query) => {
-  return !!query.candidate;
-};
-
-export async function getServerSideProps({ query }) {
+export const getServerSideProps = async ({ query }) => {
   const initialUnfilteredContestResults = await getContestResults(
     getUniversalQueryParams(query),
   );
@@ -36,7 +29,7 @@ export async function getServerSideProps({ query }) {
       initialQuery: query,
     },
   };
-}
+};
 
 const useStyles = createUseStyles({
   '@global': {
@@ -80,6 +73,26 @@ const useStyles = createUseStyles({
   },
 });
 
+const useFetchContestResults = (
+  query,
+  initialQuery,
+  initialResults,
+  isFilteredQuery = false,
+) => {
+  const queryString = new URLSearchParams(query).toString();
+  const key =
+    !isFilteredQuery || hasFiltersApplied(query)
+      ? `/api/contest_results?${queryString}`
+      : null;
+  return useSWR(key, fetcher, {
+    revalidateOnFocus: false,
+    initialData:
+      JSON.stringify(query) === JSON.stringify(initialQuery)
+        ? initialResults
+        : null,
+  });
+};
+
 function HomePage({
   initialUnfilteredContestResults,
   initialFilteredContestResults,
@@ -98,43 +111,22 @@ function HomePage({
     router.query?.election || initialFilterPayload.elections[0].id,
   );
 
-  const unfilteredQueryString = new URLSearchParams(
+  const { data: unfilteredContestResults } = useFetchContestResults(
     getUniversalQueryParams(router.query),
-  ).toString();
-  const { data: unfilteredContestResults } = useSWR(
-    `/api/contest_results?${unfilteredQueryString}`,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      initialData:
-        JSON.stringify(getUniversalQueryParams(router.query)) ===
-        JSON.stringify(getUniversalQueryParams(initialQuery))
-          ? initialUnfilteredContestResults
-          : null,
-    },
+    getUniversalQueryParams(initialQuery),
+    initialUnfilteredContestResults,
   );
 
-  const queryString = new URLSearchParams(router.query).toString();
-  const { data: filteredContestResults } = useSWR(
-    hasFiltersApplied(router.query)
-      ? `/api/contest_results?${queryString}`
-      : null,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      initialData:
-        JSON.stringify(router.query) === JSON.stringify(initialQuery)
-          ? initialFilteredContestResults
-          : null,
-    },
+  const { data: filteredContestResults } = useFetchContestResults(
+    router.query,
+    initialQuery,
+    initialFilteredContestResults,
+    true,
   );
 
   const { data: filterPayload } = useSWR(`/api/filter_payload`, fetcher, {
     revalidateOnFocus: false,
-    initialData:
-      JSON.stringify(router.query) === JSON.stringify(initialQuery)
-        ? initialFilterPayload
-        : null,
+    initialData: initialFilterPayload,
   });
 
   let groupedContests = [];
