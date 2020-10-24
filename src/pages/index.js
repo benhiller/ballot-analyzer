@@ -206,6 +206,7 @@ function HomePage({
             <div key={contest.id} className={classes.contest}>
               <Contest
                 contest={contest}
+                hasFiltersApplied={!!filteredContestResults}
                 totalVotesForFilteredCandidate={totalVotesForFilteredCandidate}
               />
             </div>

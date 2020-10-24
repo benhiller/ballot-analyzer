@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createUseStyles } from 'react-jss';
+import classNames from 'classnames';
 
 import { capitalizeName, humanReadableContest } from 'src/formatting';
 
@@ -41,6 +42,13 @@ const useStyles = createUseStyles({
     overflow: 'hidden',
     textAlign: 'right',
   },
+  pctChange: {},
+  pctIncrease: {
+    color: '#4fb061',
+  },
+  pctDecrease: {
+    color: '#ae5155',
+  },
   pctBarCol: {
     width: '25%',
     paddingLeft: '5px',
@@ -62,7 +70,11 @@ const useStyles = createUseStyles({
   },
 });
 
-const Contest = ({ contest, totalVotesForFilteredCandidate }) => {
+const Contest = ({
+  contest,
+  hasFiltersApplied,
+  totalVotesForFilteredCandidate,
+}) => {
   // filter is important, without it we'd need to do array spread to ensure
   // sort doesn't mutate candidates
   const candidates = contest.candidates.filter((c) => c.votes !== 0);
@@ -113,9 +125,18 @@ const Contest = ({ contest, totalVotesForFilteredCandidate }) => {
                 {candidate.votes.toLocaleString()}
               </td>
               <td className={classes.pctCol}>
-                {candidate.id === 'unknown'
-                  ? '-'
-                  : `${((candidate.votes / totalVotes) * 100).toFixed(1)}%`}
+                <>
+                  {candidate.id !== 'unknown' &&
+                    `${((candidate.votes / totalVotes) * 100).toFixed(1)}%`}
+                  {hasFiltersApplied && candidate.id !== 'unknown' && (
+                    <span
+                      className={classNames(classes.pctChange, {
+                        [classes.pctIncrease]: false,
+                        [classes.pctDecrease]: true,
+                      })}
+                    >{` (+5.3)`}</span>
+                  )}
+                </>
               </td>
               <td className={classes.pctBarCol}>
                 {candidate.id === 'unknown' ? (
