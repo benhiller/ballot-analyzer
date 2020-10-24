@@ -26,20 +26,23 @@ const useStyles = createUseStyles({
     borderCollapse: 'separate',
   },
   candidateCol: {
-    width: '25%',
+    width: '35%',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
   votesCol: {
     width: '15%',
+    overflow: 'hidden',
     textAlign: 'right',
     color: '#888',
   },
   pctCol: {
-    width: '10%',
+    width: '25%',
+    overflow: 'hidden',
     textAlign: 'right',
-    paddingLeft: '25px',
   },
   pctBarCol: {
-    width: '15%',
+    width: '25%',
     paddingLeft: '5px',
   },
   barWrapper: {
