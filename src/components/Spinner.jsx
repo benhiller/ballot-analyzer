@@ -11,7 +11,7 @@ const useStyles = createUseStyles({
     'height': '11em',
     'borderRadius': '50%',
     'background':
-      'linear-gradient(to right, rgba(190,36,51,1) 10%, rgba(255, 255, 255, 0) 40%)',
+      'linear-gradient(to right, rgba(101,69,125,1) 0%, rgba(190,36,51,1) 40%, rgba(190,36,51,1) 50%, rgba(255, 255, 255, 0) 50%)',
     'position': 'relative',
     'animation': '$load3 1.4s infinite linear',
     'transform': 'translateZ(0)',
@@ -19,7 +19,7 @@ const useStyles = createUseStyles({
       width: '50%',
       height: '50%',
       background:
-        'linear-gradient(to bottom, rgba(14,82,198,1) 30%, rgba(190,36,51,1) 100%)',
+        'linear-gradient(to bottom, rgba(14,82,198,1) 10%, rgba(101,69,125,1) 90%, rgba(101,69,125,1) 100%)',
       borderRadius: '100% 0 0 0',
       position: 'absolute',
       top: 0,
