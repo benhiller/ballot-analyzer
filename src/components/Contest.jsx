@@ -41,6 +41,9 @@ const useStyles = createUseStyles({
     borderSpacing: '0 5px',
     borderCollapse: 'separate',
   },
+  unknownCandidate: {
+    fontStyle: 'italic',
+  },
   candidateCol: {
     width: '35%',
     overflow: 'hidden',
@@ -127,7 +130,12 @@ const Contest = ({
       <table className={classes.resultsTable}>
         <tbody>
           {visibleCandidates.map((candidate) => (
-            <tr key={candidate.id}>
+            <tr
+              key={candidate.id}
+              className={classNames({
+                [classes.unknownCandidate]: candidate.id === 'unknown',
+              })}
+            >
               <td className={classes.candidateCol}>
                 {capitalizeName(candidate.name)}
               </td>
