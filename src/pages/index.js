@@ -183,7 +183,7 @@ function HomePage({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Inter"
         />
-        <title>SF Election Analyzer</title>
+        <title>SF Election Results</title>
       </Head>
       <h1>San Francisco Election Results</h1>
       <FilterControls
