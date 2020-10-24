@@ -23,38 +23,43 @@ export function capitalizeName(name) {
     .join(' ');
 }
 
+const humanReadableParty = (partyName) => {
+  switch (partyName) {
+    case 'DEM':
+      return 'Democratic';
+    case 'REP':
+      return 'Republican';
+    case 'AI':
+      return 'American Indepdenent';
+    case 'GRN':
+      return 'Green';
+    case 'P&F':
+      return 'Peace and Freedom';
+    case 'LIB':
+      return 'Libertarian';
+    default:
+      return partyName;
+  }
+};
+
 export function humanReadableContest(name) {
   if (name.startsWith('President')) {
     const party = name.slice('President '.length);
 
-    let humanReadableParty = party;
-    switch (party) {
-      case 'DEM':
-        humanReadableParty = 'Democratic';
-        break;
-      case 'REP':
-        humanReadableParty = 'Republican';
-        break;
-      case 'AI':
-        humanReadableParty = 'American Indepdenent';
-        break;
-      case 'GRN':
-        humanReadableParty = 'Green';
-        break;
-      case 'P&F':
-        humanReadableParty = 'Peace and Freedom';
-        break;
-      case 'LIB':
-        humanReadableParty = 'Libertarian';
-        break;
-    }
-
-    return `${humanReadableParty} Presidential Primary`;
+    return `${humanReadableParty(party)} Presidential Primary`;
   } else if (name.startsWith('US House of Rep')) {
     const district = name.slice('US House of Rep '.length);
 
     return `US House of Representatives - ${district}`;
+  } else if (name.startsWith('CCC')) {
+    const districtAndParty = name.slice('CCC '.length);
+    const matches = districtAndParty.match(/(District [0-9]+) ([a-z]*)/i);
+    const district = matches[1];
+    const party = matches[2];
+    return `${humanReadableParty(
+      party,
+    )} County Central Committee - ${district}`;
   }
 
-  return name;
+  return capitalizeName(name);
 }
