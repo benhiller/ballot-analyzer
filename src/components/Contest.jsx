@@ -42,10 +42,20 @@ const useStyles = createUseStyles({
     width: '15%',
     paddingLeft: '5px',
   },
+  barWrapper: {
+    height: '22px',
+    position: 'relative',
+  },
+  fullBar: {
+    width: '100%',
+    height: '22px',
+    backgroundColor: '#f2f2f2',
+  },
   pctBar: {
-    height: '24px',
-    backgroundColor: '#389',
-    display: 'block',
+    position: 'relative',
+    top: '-22px',
+    height: '22px',
+    backgroundColor: '#71828e',
   },
 });
 
@@ -108,15 +118,19 @@ const Contest = ({ contest, totalVotesForFilteredCandidate }) => {
                 {candidate.id === 'unknown' ? (
                   <div />
                 ) : (
-                  <div
-                    style={{
-                      width: `${((candidate.votes / totalVotes) * 100).toFixed(
-                        1,
-                      )}%`,
-                    }}
-                    className={classes.pctBar}
-                  >
-                    {' '}
+                  <div className={classes.barWrapper}>
+                    <div className={classes.fullBar} />
+                    <div
+                      style={{
+                        width: `${(
+                          (candidate.votes / totalVotes) *
+                          100
+                        ).toFixed(1)}%`,
+                      }}
+                      className={classes.pctBar}
+                    >
+                      {' '}
+                    </div>
                   </div>
                 )}
               </td>
