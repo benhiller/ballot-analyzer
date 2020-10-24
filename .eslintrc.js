@@ -9,4 +9,9 @@ module.exports = {
   globals: {
     fetch: false,
   },
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
 };
