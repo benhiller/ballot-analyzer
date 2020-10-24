@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 
 import { getFilterPayload, getContestResults } from 'src/data';
 import { getUniversalQueryParams, hasFiltersApplied } from 'src/parameters';
+import { computeTotalVotes } from 'src/utils';
 import FilterControls from 'src/components/FilterControls';
 import Contest from 'src/components/Contest';
 import Spinner from 'src/components/Spinner';
@@ -74,6 +75,50 @@ const useFetchContestResults = (
   });
 };
 
+const augmentResultsWithPercentChanges = (
+  filteredContestResults,
+  unfilteredContestResults,
+) => {
+  for (const contest of filteredContestResults) {
+    const unfilteredContest = unfilteredContestResults.find(
+      (c) => c.id === contest.id,
+    );
+    const unfilteredTotalVotes = computeTotalVotes(
+      unfilteredContest.candidates,
+    );
+    contest.unfilteredTotalVotes = unfilteredTotalVotes;
+    for (const candidate of contest.candidates) {
+      candidate.unfilteredVotes = unfilteredContest.candidates.find(
+        (c) => c.id === candidate.id,
+      ).votes;
+    }
+  }
+  return filteredContestResults;
+};
+
+const groupContests = (contestResults) => {
+  return contestResults.reduce((arr, contest) => {
+    if (arr.length === 0) {
+      arr.push([contest]);
+    } else if (arr[arr.length - 1].length === 2) {
+      arr.push([contest]);
+    } else {
+      arr[arr.length - 1].push(contest);
+    }
+    return arr;
+  }, []);
+};
+
+const filterContests = (contestResults, candidateFilter) => {
+  return contestResults.filter(
+    (contest) =>
+      !candidateFilter ||
+      contest.candidates.findIndex(
+        (candidate) => candidate.id === candidateFilter,
+      ) === -1,
+  );
+};
+
 function HomePage({
   initialUnfilteredContestResults,
   initialFilteredContestResults,
@@ -112,35 +157,29 @@ function HomePage({
 
   let groupedContests = [];
   let totalVotesForFilteredCandidate = 0;
-  const contestResults = hasFiltersApplied(router.query)
-    ? filteredContestResults
-    : unfilteredContestResults;
-  if (contestResults) {
-    groupedContests = contestResults
-      .filter(
-        (contest) =>
-          !candidateFilter ||
-          contest.candidates.findIndex(
-            (candidate) => candidate.id === candidateFilter,
-          ) === -1,
-      )
-      .reduce((arr, contest) => {
-        if (arr.length === 0) {
-          arr.push([contest]);
-        } else if (arr[arr.length - 1].length === 2) {
-          arr.push([contest]);
-        } else {
-          arr[arr.length - 1].push(contest);
-        }
-        return arr;
-      }, []);
+  if (
+    hasFiltersApplied(router.query) &&
+    filteredContestResults &&
+    unfilteredContestResults
+  ) {
+    groupedContests = groupContests(
+      augmentResultsWithPercentChanges(
+        filterContests(filteredContestResults, candidateFilter),
+        unfilteredContestResults,
+      ),
+    );
+
     totalVotesForFilteredCandidate = candidateFilter
-      ? contestResults.find((contest) =>
+      ? filteredContestResults.find((contest) =>
           contest.candidates.find(
             (candidate) => candidate.id === candidateFilter,
           ),
         ).distinctVotes
       : 0;
+  } else if (!hasFiltersApplied(router.query) && unfilteredContestResults) {
+    groupedContests = groupContests(
+      filterContests(unfilteredContestResults, null),
+    );
   }
 
   const updateUrl = (selectedElection, candidateFilter) => {

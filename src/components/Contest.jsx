@@ -3,6 +3,8 @@ import { createUseStyles } from 'react-jss';
 import classNames from 'classnames';
 
 import { capitalizeName, humanReadableContest } from 'src/formatting';
+import { computeTotalVotes } from 'src/utils';
+import CandidatePercent from 'src/components/CandidatePercent';
 
 const useStyles = createUseStyles({
   container: {
@@ -42,13 +44,6 @@ const useStyles = createUseStyles({
     overflow: 'hidden',
     textAlign: 'right',
   },
-  pctChange: {},
-  pctIncrease: {
-    color: '#4fb061',
-  },
-  pctDecrease: {
-    color: '#ae5155',
-  },
   pctBarCol: {
     width: '25%',
     paddingLeft: '5px',
@@ -83,10 +78,7 @@ const Contest = ({
 
   const [showAllCandidates, setShowAllCandidates] = useState(false);
 
-  const totalVotes = candidates.reduce(
-    (acc, candidate) => acc + candidate.votes,
-    0,
-  );
+  const totalVotes = computeTotalVotes(candidates);
   const unknownVotes = totalVotesForFilteredCandidate - contest.distinctVotes;
   if (unknownVotes > 0) {
     candidates.push({
@@ -125,18 +117,12 @@ const Contest = ({
                 {candidate.votes.toLocaleString()}
               </td>
               <td className={classes.pctCol}>
-                <>
-                  {candidate.id !== 'unknown' &&
-                    `${((candidate.votes / totalVotes) * 100).toFixed(1)}%`}
-                  {hasFiltersApplied && candidate.id !== 'unknown' && (
-                    <span
-                      className={classNames(classes.pctChange, {
-                        [classes.pctIncrease]: false,
-                        [classes.pctDecrease]: true,
-                      })}
-                    >{` (+5.3)`}</span>
-                  )}
-                </>
+                <CandidatePercent
+                  candidate={candidate}
+                  totalVotes={totalVotes}
+                  unfilteredTotalVotes={contest.unfilteredTotalVotes}
+                  hasFiltersApplied={hasFiltersApplied}
+                />
               </td>
               <td className={classes.pctBarCol}>
                 {candidate.id === 'unknown' ? (
