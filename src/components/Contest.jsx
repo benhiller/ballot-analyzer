@@ -21,6 +21,19 @@ const useStyles = createUseStyles({
     paddingBottom: '5px',
     borderBottom: '1px solid #eee',
   },
+  name: {
+    fontWeight: 'bold',
+  },
+  paginationToggle: {
+    'color': '#888',
+    'fontVariant': 'all-small-caps',
+    'position': 'relative',
+    'top': '-4px',
+    '&:hover': {
+      color: '#555',
+      cursor: 'pointer',
+    },
+  },
   resultsTable: {
     tableLayout: 'fixed',
     width: '100%',
@@ -97,13 +110,17 @@ const Contest = ({
   return (
     <div className={classes.container}>
       <div className={classes.header}>
-        <div>{humanReadableContest(contest.name)}</div>
-        <div>
+        <div className={classes.name}>{humanReadableContest(contest.name)}</div>
+        <div className={classes.paginationToggle}>
           {visibleCandidates.length !== candidates.length && (
-            <a onClick={() => setShowAllCandidates(true)}>+ Show All</a>
+            <a onClick={() => setShowAllCandidates(true)}>
+              + Show All Candidates
+            </a>
           )}
           {showAllCandidates && (
-            <a onClick={() => setShowAllCandidates(false)}>- Show Fewer</a>
+            <a onClick={() => setShowAllCandidates(false)}>
+              - Show Fewer Candidates
+            </a>
           )}
         </div>
       </div>
