@@ -37,11 +37,17 @@ const useStyles = createUseStyles({
     },
   },
   'container': {
-    margin: '10px',
+    margin: '20px',
+  },
+  'title': {
+    fontSize: '28px',
+    fontWeight: 600,
+    marginBottom: '15px',
   },
   'row': {
     display: 'flex',
     flexDirection: 'row',
+    margin: '0 -10px',
   },
   'contest': {
     flex: '0.5 1 0%',
@@ -185,7 +191,7 @@ function HomePage({
         />
         <title>SF Election Results</title>
       </Head>
-      <h1>San Francisco Election Results</h1>
+      <h1 className={classes.title}>San Francisco Election Results</h1>
       <FilterControls
         filterPayload={filterPayload}
         selectedElection={selectedElection}
