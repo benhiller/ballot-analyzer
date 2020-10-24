@@ -7,7 +7,7 @@ ui:
 - group options in candidate typeahead by contest?
 - Separate races by type? Group presidential primaries, house, state leg, props, etc?
 - Allow clicking on a candidate row to apply them as a filter?
-- visually differentiate unknown vs other candidates. add explanation for that row
+- tooltip explanation for unknown
 - clear typeahead if it has input but nothing selected on blur
 
 data:
