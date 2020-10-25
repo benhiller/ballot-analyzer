@@ -8,6 +8,7 @@ ui:
 - also indicate diff in bar chart? maybe too noisy
 - Separate races by type? Group presidential primaries, house, state leg, props, etc?
 - test on iphone
+  - try to break up rows into two rows on iphone?
 
 data:
 - RCV after rank 1 has IsVote = False. need to include that if we want to take 2nd, 3rd, etc choice into account
