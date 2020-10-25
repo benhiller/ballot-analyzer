@@ -46,9 +46,12 @@ const useStyles = createUseStyles({
     marginBottom: '15px',
   },
   'row': {
-    display: 'flex',
-    flexDirection: 'row',
-    margin: '0 -10px',
+    'display': 'flex',
+    'flexDirection': 'column',
+    'margin': '0 -10px',
+    '@media (min-width: 1024px)': {
+      flexDirection: 'row',
+    },
   },
   'contest': {
     flex: '0.5 1 0%',
