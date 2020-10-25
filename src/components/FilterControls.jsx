@@ -161,7 +161,7 @@ const FilterControls = ({
   return (
     <>
       <div className={classes.titleContainer}>
-        <h1 className={classes.title}>San Francisco Election Results</h1>
+        <h1 className={classes.title}>San Francisco Ballot Analyzer</h1>
         <select
           className={classNames('custom-select', classes.electionDropdown)}
           value={selectedElection}

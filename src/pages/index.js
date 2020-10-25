@@ -266,7 +266,9 @@ function HomePage({
           rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Inter"
         />
-        <title>SF Election Results</title>
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>SF Ballot Analyzer</title>
       </Head>
       <FilterControls
         filterPayload={filterPayload}
