@@ -82,6 +82,7 @@ const useStyles = createUseStyles({
 const Contest = ({
   contest,
   hasFiltersApplied,
+  containsCandidateFilter,
   totalVotesForFilteredCandidate,
 }) => {
   // filter is important, without it we'd need to do array spread to ensure
@@ -153,35 +154,39 @@ const Contest = ({
               <td className={classes.votesCol}>
                 {candidate.votes.toLocaleString()}
               </td>
-              <td className={classes.pctCol}>
-                <CandidatePercent
-                  candidate={candidate}
-                  totalVotes={totalVotes}
-                  unfilteredTotalVotes={contest.unfilteredTotalVotes}
-                  maxPercentChange={maxPercentChange}
-                  hasFiltersApplied={hasFiltersApplied}
-                />
-              </td>
-              <td className={classes.pctBarCol}>
-                {candidate.id === 'unknown' ? (
-                  <div />
-                ) : (
-                  <div className={classes.barWrapper}>
-                    <div className={classes.fullBar} />
-                    <div
-                      style={{
-                        width: `${(
-                          (candidate.votes / totalVotes) *
-                          100
-                        ).toFixed(1)}%`,
-                      }}
-                      className={classes.pctBar}
-                    >
-                      {' '}
-                    </div>
-                  </div>
-                )}
-              </td>
+              {!containsCandidateFilter && (
+                <>
+                  <td className={classes.pctCol}>
+                    <CandidatePercent
+                      candidate={candidate}
+                      totalVotes={totalVotes}
+                      unfilteredTotalVotes={contest.unfilteredTotalVotes}
+                      maxPercentChange={maxPercentChange}
+                      hasFiltersApplied={hasFiltersApplied}
+                    />
+                  </td>
+                  <td className={classes.pctBarCol}>
+                    {candidate.id === 'unknown' ? (
+                      <div />
+                    ) : (
+                      <div className={classes.barWrapper}>
+                        <div className={classes.fullBar} />
+                        <div
+                          style={{
+                            width: `${(
+                              (candidate.votes / totalVotes) *
+                              100
+                            ).toFixed(1)}%`,
+                          }}
+                          className={classes.pctBar}
+                        >
+                          {' '}
+                        </div>
+                      </div>
+                    )}
+                  </td>
+                </>
+              )}
             </tr>
           ))}
         </tbody>

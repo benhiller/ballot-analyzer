@@ -121,28 +121,6 @@ const groupContests = (contestResults) => {
   }, []);
 };
 
-const filterContests = (contestResults, candidateFilter) => {
-  if (!candidateFilter) {
-    return contestResults;
-  }
-
-  const contestForCandidateFilter = contestResults.find(
-    (c) => c.candidates.findIndex((cand) => cand.id === candidateFilter) !== -1,
-  );
-  // Include this contest, since seeing what other votes people cast in the
-  // same contest can be interesting
-  if (contestForCandidateFilter?.numVotes > 1) {
-    return contestResults;
-  }
-
-  return contestResults.filter(
-    (contest) =>
-      contest.candidates.findIndex(
-        (candidate) => candidate.id === candidateFilter,
-      ) === -1,
-  );
-};
-
 function HomePage({
   initialUnfilteredContestResults,
   initialFilteredContestResults,
@@ -198,7 +176,7 @@ function HomePage({
     loading = false;
     groupedContests = groupContests(
       augmentResultsWithPercentChanges(
-        filterContests(filteredContestResults, candidateFilter),
+        filteredContestResults,
         unfilteredContestResults,
       ),
     );
@@ -348,6 +326,12 @@ function HomePage({
               <Contest
                 contest={contest}
                 hasFiltersApplied={hasFiltersApplied}
+                containsCandidateFilter={
+                  candidateFilter &&
+                  contest.candidates.findIndex(
+                    (c) => c.id === candidateFilter,
+                  ) !== -1
+                }
                 totalVotesForFilteredCandidate={totalVotesForFilteredCandidate}
               />
             </div>
