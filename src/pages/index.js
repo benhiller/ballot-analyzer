@@ -43,6 +43,10 @@ const useStyles = createUseStyles({
   container: {
     margin: '0 20px',
   },
+  blankState: {
+    padding: '50px 0',
+    textAlign: 'center',
+  },
   row: {
     display: 'flex',
     flexDirection: 'column',
@@ -75,6 +79,7 @@ const useFetchContestResults = (
       : null;
   return useSWR(key, fetcher, {
     revalidateOnFocus: false,
+    revalidateOnReconnect: false,
     initialData:
       JSON.stringify(query) === JSON.stringify(initialQuery)
         ? initialResults
@@ -126,7 +131,7 @@ const filterContests = (contestResults, candidateFilter) => {
   );
   // Include this contest, since seeing what other votes people cast in the
   // same contest can be interesting
-  if (contestForCandidateFilter.numVotes > 1) {
+  if (contestForCandidateFilter?.numVotes > 1) {
     return contestResults;
   }
 
@@ -177,12 +182,15 @@ function HomePage({
 
   const { data: filterPayload } = useSWR(`/api/filter_payload`, fetcher, {
     revalidateOnFocus: false,
+    revalidateOnReconnect: false,
     initialData: initialFilterPayload,
   });
 
+  let loading = true;
   let groupedContests = [];
   let totalVotesForFilteredCandidate = 0;
   if (hasFiltersApplied && filteredContestResults && unfilteredContestResults) {
+    loading = false;
     groupedContests = groupContests(
       augmentResultsWithPercentChanges(
         filterContests(filteredContestResults, candidateFilter),
@@ -195,9 +203,10 @@ function HomePage({
           contest.candidates.find(
             (candidate) => candidate.id === candidateFilter,
           ),
-        ).distinctVotes
+        )?.distinctVotes
       : 0;
   } else if (!hasFiltersApplied && unfilteredContestResults) {
+    loading = false;
     groupedContests = groupContests(unfilteredContestResults, null);
   }
 
@@ -279,7 +288,12 @@ function HomePage({
         onChangeCountingGroupFilter={handleCountingGroupFilterChange}
         onChangeElection={handleElectionChange}
       />
-      {!groupedContests.length && <Spinner />}
+      {loading && <Spinner />}
+      {!loading && groupedContests.length === 0 && (
+        <div className={classes.blankState}>
+          No elections found. Try removing a filter.
+        </div>
+      )}
       {groupedContests.map((contests, idx) => (
         <div key={idx} className={classes.row}>
           {contests.map((contest) => (
