@@ -40,11 +40,6 @@ const useStyles = createUseStyles({
   'container': {
     margin: '20px',
   },
-  'title': {
-    fontSize: '28px',
-    fontWeight: 600,
-    marginBottom: '15px',
-  },
   'row': {
     'display': 'flex',
     'flexDirection': 'column',
@@ -256,7 +251,6 @@ function HomePage({
         />
         <title>SF Election Results</title>
       </Head>
-      <h1 className={classes.title}>San Francisco Election Results</h1>
       <FilterControls
         filterPayload={filterPayload}
         selectedElection={selectedElection}
