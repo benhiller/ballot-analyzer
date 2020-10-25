@@ -271,7 +271,11 @@ function HomePage({
   return (
     <div className={classes.container}>
       <Head>
-        <link rel="preconnect" href="https://fonts.gstatic.com/" crossOrigin />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com/"
+          crossOrigin="true"
+        />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700&display=swap"
