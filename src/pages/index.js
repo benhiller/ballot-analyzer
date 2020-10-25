@@ -39,6 +39,12 @@ const styles = css`
     font-family: Inter, Helvetica, sans-serif;
     color: #333;
   }
+  :global(a) {
+    text-decoration: none;
+  }
+  :global(a:hover) {
+    text-decoration: underline;
+  }
 
   .pageContainer {
     margin: 0 20px;
@@ -67,6 +73,9 @@ const styles = css`
     margin: 20px -20px -20px;
     padding: 50px 50px 40px;
     text-align: center;
+  }
+  .footer a {
+    color: #007bff;
   }
 `;
 
