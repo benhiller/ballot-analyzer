@@ -36,6 +36,9 @@ const useStyles = createUseStyles({
     '& .dropdown-header': {
       padding: '3px 1rem',
     },
+    '& .rbt-input': {
+      textOverflow: 'ellipsis',
+    },
   },
 });
 
