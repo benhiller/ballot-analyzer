@@ -17,8 +17,8 @@
     "react": "^16.14.0",
     "react-bootstrap-typeahead": "^5.1.2",
     "react-dom": "^16.14.0",
-    "react-jss": "^10.4.0",
     "sqlite3": "^5.0.0",
+    "styled-jsx": "^3.3.1",
     "swr": "^0.3.5"
   },
   "scripts": {

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { createUseStyles } from 'react-jss';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import classNames from 'classnames';
+import css from 'styled-jsx/css';
 
 import {
   alternativeContestNames,
@@ -12,66 +12,80 @@ import {
 } from 'src/formatting';
 import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
 
-const useStyles = createUseStyles({
-  titleContainer: {
-    margin: '0px -20px 15px',
-    padding: '15px 20px 15px',
-    background:
-      'linear-gradient(90deg, rgba(14,82,198,1) 25%, rgba(190,36,51,1) 75%)',
-    color: 'white',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'column',
-    '@media (min-width: 1024px)': {
-      flexDirection: 'row',
-      width: 'auto',
-    },
-  },
-  title: {
-    fontSize: '28px',
-    fontWeight: 200,
-    display: 'inline',
-    marginTop: '4px',
-    marginBottom: '10px',
-    '@media (min-width: 1024px)': {
-      marginBottom: 0,
-    },
-  },
-  electionDropdown: {
-    '@media (min-width: 1024px)': {
-      width: 'auto',
-    },
-  },
-  filtersContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  filters: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-  },
-  filter: {
-    marginBottom: '10px',
-  },
-  typeaheadLabel: {
-    marginRight: '5px',
-  },
-  typeahead: {
-    display: 'inline-block',
-    width: '300px',
-    '& .rbt-menu': {
-      width: '450px !important',
-    },
-    '& .dropdown-header': {
-      padding: '3px 1rem',
-    },
-    '& .rbt-input': {
-      textOverflow: 'ellipsis',
-    },
-  },
-});
+const styles = css`
+  .titleContainer {
+    margin: 0px -20px 15px;
+    padding: 15px 20px 15px;
+    background: linear-gradient(
+      90deg,
+      rgba(14, 82, 198, 1) 25%,
+      rgba(190, 36, 51, 1) 75%
+    );
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+  }
+  @media (min-width: 1024px) {
+    .titleContainer {
+      flex-direction: row;
+      width: auto;
+    }
+  }
+
+  .title {
+    font-size: 28px;
+    font-weight: 200;
+    display: inline;
+    margin-top: 4px;
+    margin-bottom: 10px;
+  }
+  @media (min-width: 1024px) {
+    .title {
+      margin-bottom: 0;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .electionDropdown {
+      width: auto;
+    }
+  }
+
+  .filtersContainer {
+    display: flex;
+    justify-content: center;
+  }
+
+  .filters {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .filter {
+    margin-bottom: 10px;
+  }
+
+  .typeaheadLabel {
+    margin-right: 5px;
+  }
+
+  :global(.typeahead) {
+    display: inline-block;
+    width: 300px;
+  }
+  :global(.typeahead .rbt-menu) {
+    width: 450px !important;
+  }
+  :global(.typeahead .dropdown-header) {
+    padding: 3px 1rem;
+  }
+  :global(.typeahead .rbt-input) {
+    text-overflow: ellipsis;
+  }
+`;
 
 const FilterControls = ({
   filterPayload,
@@ -84,7 +98,6 @@ const FilterControls = ({
   onChangeCountingGroupFilter,
   onChangeDistrictFilter,
 }) => {
-  const classes = useStyles();
   const candidateTypeaheadRef = useRef(null);
   const countingGroupTypeaheadRef = useRef(null);
   const districtTypeaheadRef = useRef(null);
@@ -217,10 +230,11 @@ const FilterControls = ({
 
   return (
     <>
-      <div className={classes.titleContainer}>
-        <h1 className={classes.title}>San Francisco Ballot Analyzer</h1>
+      <style jsx>{styles}</style>
+      <div className="titleContainer">
+        <h1 className="title">San Francisco Ballot Analyzer</h1>
         <select
-          className={classNames('custom-select', classes.electionDropdown)}
+          className={classNames('custom-select', 'electionDropdown')}
           value={selectedElection}
           onChange={handleElectionChange}
         >
@@ -231,14 +245,14 @@ const FilterControls = ({
           ))}
         </select>
       </div>
-      <div className={classes.filtersContainer}>
-        <div className={classes.filters}>
-          <div className={classes.filter}>
-            <span className={classes.typeaheadLabel}>People who voted for</span>
+      <div className="filtersContainer">
+        <div className="filters">
+          <div className="filter">
+            <span className="typeaheadLabel">People who voted for</span>
             <Typeahead
               id="candidate-filter-typeahead"
               ref={candidateTypeaheadRef}
-              className={classes.typeahead}
+              className="typeahead"
               placeholder="anyone"
               options={candidateOptions}
               selected={selectedCandidateFilter}
@@ -255,12 +269,12 @@ const FilterControls = ({
               }}
             />
           </div>
-          <div className={classes.filter}>
-            <span className={classes.typeaheadLabel}>and voted via</span>
+          <div className="filter">
+            <span className="typeaheadLabel">and voted via</span>
             <Typeahead
               id="counting-group-filter-typeahead"
               ref={countingGroupTypeaheadRef}
-              className={classes.typeahead}
+              className="typeahead"
               placeholder="any method"
               options={countingGroupOptions}
               selected={selectedCountingGroupOptions}
@@ -275,12 +289,12 @@ const FilterControls = ({
               }}
             />
           </div>
-          <div className={classes.filter}>
-            <span className={classes.typeaheadLabel}>and voted in</span>
+          <div className="filter">
+            <span className="typeaheadLabel">and voted in</span>
             <Typeahead
               id="district-filter-typeahead"
               ref={districtTypeaheadRef}
-              className={classes.typeahead}
+              className="typeahead"
               placeholder="anywhere"
               options={districtOptions}
               selected={selectedDistrictOptions}

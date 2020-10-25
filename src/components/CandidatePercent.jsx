@@ -1,30 +1,30 @@
 import React from 'react';
-import { createUseStyles } from 'react-jss';
 import classNames from 'classnames';
+import css from 'styled-jsx/css';
 
-const useStyles = createUseStyles({
-  pctChange: {
-    display: 'inline-block',
-  },
-  singleDigitPctChange: {
-    width: '55px',
-  },
-  doubleDigitPctChange: {
-    width: '65px',
-  },
-  tripleDigitPctChange: {
-    width: '75px',
-  },
-  pctNoChange: {
-    textAlign: 'center',
-  },
-  pctIncrease: {
-    color: '#4fb061',
-  },
-  pctDecrease: {
-    color: '#ae5155',
-  },
-});
+const styles = css`
+  .pctChange {
+    display: inline-block;
+  }
+  .singleDigitPctChange {
+    width: 55px;
+  }
+  .doubleDigitPctChange {
+    width: 65px;
+  }
+  .tripleDigitPctChange {
+    width: 75px;
+  }
+  .pctNoChange {
+    text-align: center;
+  }
+  .pctIncrease {
+    color: #4fb061;
+  }
+  .pctDecrease {
+    color: #ae5155;
+  }
+`;
 
 const CandidatePercent = ({
   candidate,
@@ -33,8 +33,6 @@ const CandidatePercent = ({
   maxPercentChange,
   hasFiltersApplied,
 }) => {
-  const classes = useStyles();
-
   const candidatePercent = candidate.votes / totalVotes;
   let percentChange = 0;
   if (hasFiltersApplied) {
@@ -57,18 +55,19 @@ const CandidatePercent = ({
 
   return (
     <>
+      <style jsx>{styles}</style>
       {candidate.id !== 'unknown' && formattedPercent}
       {hasFiltersApplied && candidate.id !== 'unknown' && (
         <span
-          className={classNames(classes.pctChange, {
-            [classes.singleDigitPctChange]: maxPercentChange < 0.1,
-            [classes.doubleDigitPctChange]:
+          className={classNames('pctChange', {
+            singleDigitPctChange: maxPercentChange < 0.1,
+            doubleDigitPctChange:
               maxPercentChange >= 0.1 && maxPercentChange < 1.0,
-            [classes.tripleDigitPctChange]: maxPercentChange === 1.0,
-            [classes.pctIncrease]: percentChange > 0,
-            [classes.pctDecrease]: percentChange < 0,
+            tripleDigitPctChange: maxPercentChange === 1.0,
+            pctIncrease: percentChange > 0,
+            pctDecrease: percentChange < 0,
             // eslint-disable-next-line eqeqeq
-            [classes.pctNoChange]: percentChange == 0,
+            pctNoChange: percentChange == 0,
           })}
         >
           {' '}

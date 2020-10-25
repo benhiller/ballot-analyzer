@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createUseStyles } from 'react-jss';
+import css from 'styled-jsx/css';
 import useSWR from 'swr';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -34,37 +34,40 @@ export const getServerSideProps = async ({ query }) => {
   };
 };
 
-const useStyles = createUseStyles({
-  '@global': {
-    body: {
-      fontFamily: 'Inter, Helvetica, sans-serif',
-    },
-  },
-  container: {
-    margin: '0 20px',
-  },
-  blankState: {
-    padding: '50px 0',
-    textAlign: 'center',
-  },
-  row: {
-    display: 'flex',
-    flexDirection: 'column',
-    margin: '0 -10px',
-    '@media (min-width: 1024px)': {
-      flexDirection: 'row',
-    },
-  },
-  contest: {
-    flex: '0.5 1 0%',
-  },
-  footer: {
-    backgroundColor: '#f2f2f2',
-    margin: '20px -20px -20px',
-    padding: '50px 50px 30px',
-    textAlign: 'center',
-  },
-});
+const styles = css`
+  :global(body) {
+    font-family: Inter, Helvetica, sans-serif;
+  }
+
+  .pageContainer {
+    margin: 0 20px;
+  }
+  .blankState {
+    padding: 50px 0;
+    text-align: center;
+  }
+
+  .contestRow {
+    display: flex;
+    flex-direction: column;
+    margin: 0 -10px;
+  }
+  @media (min-width: 1024px) {
+    .contestRow {
+      flex-direction: row;
+    }
+  }
+
+  .contest {
+    flex: 0.5 1 0%;
+  }
+  .footer {
+    background-color: #f2f2f2;
+    margin: 20px -20px -20px;
+    padding: 50px 50px 30px;
+    text-align: center;
+  }
+`;
 
 const useFetchContestResults = (
   query,
@@ -127,8 +130,6 @@ function HomePage({
   initialFilterPayload,
   initialQuery,
 }) {
-  const classes = useStyles();
-
   const router = useRouter();
 
   const [candidateFilter, setCandidateFilter] = useState(
@@ -282,7 +283,7 @@ function HomePage({
   };
 
   return (
-    <div className={classes.container}>
+    <div className="pageContainer">
       <Head>
         <link
           rel="preconnect"
@@ -301,6 +302,7 @@ function HomePage({
         />
         <title>SF Ballot Analyzer</title>
       </Head>
+      <style jsx>{styles}</style>
       <FilterControls
         filterPayload={filterPayload}
         selectedElection={selectedElection}
@@ -314,14 +316,14 @@ function HomePage({
       />
       {loading && <Spinner />}
       {!loading && groupedContests.length === 0 && (
-        <div className={classes.blankState}>
+        <div className="blankState">
           No results found. Try a different filter.
         </div>
       )}
       {groupedContests.map((contests, idx) => (
-        <div key={idx} className={classes.row}>
+        <div key={idx} className="contestRow">
           {contests.map((contest) => (
-            <div key={contest.id} className={classes.contest}>
+            <div key={contest.id} className="contest">
               <Contest
                 contest={contest}
                 hasFiltersApplied={hasFiltersApplied}
@@ -337,7 +339,7 @@ function HomePage({
           ))}
         </div>
       ))}
-      <div className={classes.footer}>
+      <div className="footer">
         <p>
           Created by{' '}
           <a
