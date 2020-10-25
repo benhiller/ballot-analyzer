@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import classNames from 'classnames';
 import css from 'styled-jsx/css';
 
 import {
@@ -46,6 +45,14 @@ const styles = css`
     }
   }
 
+  .electionDropdown {
+    width: 100%;
+    height: 40px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border-color: #fff;
+    border-width: 0 10px 0 0;
+  }
   @media (min-width: 1024px) {
     .electionDropdown {
       width: auto;
@@ -233,7 +240,7 @@ const FilterControls = ({
       <div className="titleContainer">
         <h1 className="title">San Francisco Ballot Analyzer</h1>
         <select
-          className={classNames('custom-select', 'electionDropdown')}
+          className="electionDropdown"
           value={selectedElection}
           onChange={handleElectionChange}
         >

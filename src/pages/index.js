@@ -37,6 +37,7 @@ export const getServerSideProps = async ({ query }) => {
 const styles = css`
   :global(body) {
     font-family: Inter, Helvetica, sans-serif;
+    color: #333;
   }
 
   .pageContainer {
@@ -64,7 +65,7 @@ const styles = css`
   .footer {
     background-color: #f2f2f2;
     margin: 20px -20px -20px;
-    padding: 50px 50px 30px;
+    padding: 50px 50px 40px;
     text-align: center;
   }
 `;
