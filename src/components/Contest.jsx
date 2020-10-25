@@ -22,7 +22,7 @@ const useStyles = createUseStyles({
     borderBottom: '1px solid #eee',
   },
   name: {
-    fontWeight: 'bold',
+    fontWeight: 600,
   },
   paginationToggle: {
     color: '#888',

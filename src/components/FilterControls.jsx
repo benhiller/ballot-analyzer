@@ -28,7 +28,7 @@ const useStyles = createUseStyles({
   },
   title: {
     fontSize: '28px',
-    fontWeight: 600,
+    fontWeight: 200,
     display: 'inline',
     marginTop: '4px',
     marginBottom: '10px',
