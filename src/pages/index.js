@@ -5,7 +5,10 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import { getFilterPayload, getContestResults } from 'src/data';
-import { getUniversalQueryParams, hasFiltersApplied } from 'src/parameters';
+import {
+  getUniversalQueryParams,
+  queryHasFiltersApplied,
+} from 'src/parameters';
 import { computeTotalVotes } from 'src/utils';
 import FilterControls from 'src/components/FilterControls';
 import Contest from 'src/components/Contest';
@@ -17,7 +20,7 @@ export const getServerSideProps = async ({ query }) => {
   const initialUnfilteredContestResults = await getContestResults(
     getUniversalQueryParams(query),
   );
-  const initialFilteredContestResults = hasFiltersApplied(query)
+  const initialFilteredContestResults = queryHasFiltersApplied(query)
     ? await getContestResults(query)
     : null;
   const initialFilterPayload = await getFilterPayload();
@@ -61,7 +64,7 @@ const useFetchContestResults = (
 ) => {
   const queryString = new URLSearchParams(query).toString();
   const key =
-    !isFilteredQuery || hasFiltersApplied(query)
+    !isFilteredQuery || queryHasFiltersApplied(query)
       ? `/api/contest_results?${queryString}`
       : null;
   return useSWR(key, fetcher, {
@@ -108,9 +111,21 @@ const groupContests = (contestResults) => {
 };
 
 const filterContests = (contestResults, candidateFilter) => {
+  if (!candidateFilter) {
+    return contestResults;
+  }
+
+  const contestForCandidateFilter = contestResults.find(
+    (c) => c.candidates.findIndex((cand) => cand.id === candidateFilter) !== -1,
+  );
+  // Include this contest, since seeing what other votes people cast in the
+  // same contest can be interesting
+  if (contestForCandidateFilter.numVotes > 1) {
+    return contestResults;
+  }
+
   return contestResults.filter(
     (contest) =>
-      !candidateFilter ||
       contest.candidates.findIndex(
         (candidate) => candidate.id === candidateFilter,
       ) === -1,
@@ -134,6 +149,8 @@ function HomePage({
   const [countingGroupFilter, setCountingGroupFilter] = useState(
     router.query?.countingGroup || null,
   );
+
+  const hasFiltersApplied = candidateFilter || countingGroupFilter;
 
   const [selectedElection, setSelectedElection] = useState(
     router.query?.election || initialFilterPayload.elections[0].id,
@@ -159,11 +176,7 @@ function HomePage({
 
   let groupedContests = [];
   let totalVotesForFilteredCandidate = 0;
-  if (
-    hasFiltersApplied(router.query) &&
-    filteredContestResults &&
-    unfilteredContestResults
-  ) {
+  if (hasFiltersApplied && filteredContestResults && unfilteredContestResults) {
     groupedContests = groupContests(
       augmentResultsWithPercentChanges(
         filterContests(filteredContestResults, candidateFilter),
@@ -178,10 +191,8 @@ function HomePage({
           ),
         ).distinctVotes
       : 0;
-  } else if (!hasFiltersApplied(router.query) && unfilteredContestResults) {
-    groupedContests = groupContests(
-      filterContests(unfilteredContestResults, null),
-    );
+  } else if (!hasFiltersApplied && unfilteredContestResults) {
+    groupedContests = groupContests(unfilteredContestResults, null);
   }
 
   const updateUrl = (
@@ -267,7 +278,7 @@ function HomePage({
             <div key={contest.id} className={classes.contest}>
               <Contest
                 contest={contest}
-                hasFiltersApplied={!!filteredContestResults}
+                hasFiltersApplied={hasFiltersApplied}
                 totalVotesForFilteredCandidate={totalVotesForFilteredCandidate}
               />
             </div>
