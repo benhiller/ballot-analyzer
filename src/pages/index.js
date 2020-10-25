@@ -41,7 +41,7 @@ const useStyles = createUseStyles({
     },
   },
   container: {
-    margin: '20px',
+    margin: '0 20px',
   },
   row: {
     display: 'flex',
@@ -53,6 +53,12 @@ const useStyles = createUseStyles({
   },
   contest: {
     flex: '0.5 1 0%',
+  },
+  footer: {
+    backgroundColor: '#f2f2f2',
+    margin: '20px -20px -20px',
+    padding: '50px 50px 30px',
+    textAlign: 'center',
   },
 });
 
@@ -285,6 +291,20 @@ function HomePage({
           ))}
         </div>
       ))}
+      <div className={classes.footer}>
+        <p>
+          Created by <a href="https://github.com/benhiller">Ben Hiller</a> with
+          data from the{' '}
+          <a href="https://sfelections.sfgov.org/data-and-maps">
+            SF Department of Elections
+          </a>
+          .
+        </p>
+        <p>
+          View the source on{' '}
+          <a href="https://github.com/benhiller/ballot-analyzer">GitHub</a>.
+        </p>
+      </div>
     </div>
   );
 }

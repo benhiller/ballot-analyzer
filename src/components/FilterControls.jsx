@@ -12,7 +12,7 @@ import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
 
 const useStyles = createUseStyles({
   titleContainer: {
-    margin: '-20px -20px 15px',
+    margin: '0px -20px 15px',
     padding: '15px 20px 15px',
     background:
       'linear-gradient(90deg, rgba(14,82,198,1) 25%, rgba(190,36,51,1) 75%)',
