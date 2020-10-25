@@ -8,6 +8,7 @@ import {
   shouldRenderDistrict,
   humanReadableDistrict,
 } from 'src/formatting';
+import Combobox from 'src/components/Combobox';
 // import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
 
 const styles = css`
@@ -251,6 +252,7 @@ const FilterControls = ({
           ))}
         </select>
       </div>
+      <Combobox />
       <div className="filtersContainer">
         <div className="filters">
           <div className="filter">
