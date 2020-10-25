@@ -263,7 +263,7 @@ const importVotes = async (
               record_id: item.RecordId,
               counting_group_id: countingGroupIdMap[item.CountingGroupId],
               ballot_type_id: ballotTypeIdMap[vote.BallotTypeId],
-              precinct_portion_id: precinctPortionIdMap[vote.BallotTypeId],
+              precinct_portion_id: precinctPortionIdMap[vote.PrecinctPortionId],
             };
 
             const processContests = (contests) => {
