@@ -269,8 +269,7 @@ function HomePage({
     );
   };
 
-  const handleElectionChange = (e) => {
-    const electionId = e.target.value;
+  const handleElectionChange = (electionId) => {
     if (electionId === selectedElection) {
       return;
     }

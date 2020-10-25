@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createUseStyles } from 'react-jss';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import classNames from 'classnames';
@@ -190,6 +190,31 @@ const FilterControls = ({
     onChangeDistrictFilter(districtFilter?.id);
   };
 
+  const handleElectionChange = (e) => {
+    onChangeElection(e.target.value);
+  };
+
+  useEffect(() => {
+    if (
+      selectedElection &&
+      elections.findIndex((e) => e.id === selectedElection) === -1
+    ) {
+      onChangeElection(elections[0].id);
+    }
+
+    if (candidateFilter && selectedCandidateFilter.length === 0) {
+      onChangeCandidateFilter(null);
+    }
+
+    if (countingGroupFilter && selectedCountingGroupOptions.length === 0) {
+      onChangeCountingGroupFilter(null);
+    }
+
+    if (districtFilter && selectedDistrictOptions.length === 0) {
+      onChangeDistrictFilter(null);
+    }
+  });
+
   return (
     <>
       <div className={classes.titleContainer}>
@@ -197,7 +222,7 @@ const FilterControls = ({
         <select
           className={classNames('custom-select', classes.electionDropdown)}
           value={selectedElection}
-          onChange={onChangeElection}
+          onChange={handleElectionChange}
         >
           {elections.map((election) => (
             <option key={election.id} value={election.id}>

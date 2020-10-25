@@ -13,11 +13,9 @@ ui:
 - use 'tnum'?
 
 data:
+- use cvr_ids in URLs instead of DB IDs, since they'll be more stable?
 - RCV after rank 1 has IsVote = False. need to include that if we want to take 2nd, 3rd, etc choice into account
 - separate out undervotes when filtering
-
-bugs:
-- handle invalid election id in URL. maybe use election date instead? or just use default election instead
 
 deploy:
 - make sure election name + date are modified in Election manifest

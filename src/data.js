@@ -32,7 +32,7 @@ async function getAllElections() {
       election_name: 'election.name',
       election_date: 'election.date',
     })
-    .orderBy('id', 'asc');
+    .orderBy('date', 'desc');
 
   return elections.map((election) => ({
     id: election.election_id.toString(),
