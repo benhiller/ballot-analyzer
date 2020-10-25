@@ -1,7 +1,12 @@
 module.exports = {
-  extends: ['standard', 'prettier', 'plugin:react/recommended'],
+  extends: [
+    'standard',
+    'prettier',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+  ],
   rules: {
-    'semi': ['error', 'always'],
+    semi: ['error', 'always'],
     'comma-dangle': ['error', 'always-multiline'],
     'react/prop-types': 'off',
   },
