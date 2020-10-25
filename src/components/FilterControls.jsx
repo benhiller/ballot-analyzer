@@ -31,6 +31,10 @@ const useStyles = createUseStyles({
   electionDropdown: {
     width: 'auto',
   },
+  filterContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
   filters: {
     width: '480px',
     display: 'flex',
@@ -161,48 +165,50 @@ const FilterControls = ({
           ))}
         </select>
       </div>
-      <div className={classes.filters}>
-        <div className={classes.filter}>
-          <span className={classes.typeaheadLabel}>People who voted for</span>
-          <Typeahead
-            id="candidate-filter-typeahead"
-            ref={candidateTypeaheadRef}
-            className={classes.typeahead}
-            placeholder="anyone"
-            options={candidateOptions}
-            selected={selectedCandidateFilter}
-            onChange={handleCandidateFilterChange}
-            positionFixed
-            clearButton
-            filterBy={['label', 'contestName', 'alternativeContestNames']}
-            renderMenu={CandidateTypeaheadMenu}
-            onBlur={() => {
-              if (selectedCandidateFilter.length === 0) {
-                candidateTypeaheadRef.current &&
-                  candidateTypeaheadRef.current.clear();
-              }
-            }}
-          />
-        </div>
-        <div className={classes.filter}>
-          <span className={classes.typeaheadLabel}>and voted via</span>
-          <Typeahead
-            id="counting-group-filter-typeahead"
-            ref={countingGroupTypeaheadRef}
-            className={classes.typeahead}
-            placeholder="any method"
-            options={countingGroupOptions}
-            selected={selectedCountingGroupOptions}
-            onChange={handleCountingGroupFilterChange}
-            positionFixed
-            clearButton
-            onBlur={() => {
-              if (selectedCountingGroupOptions.length === 0) {
-                countingGroupTypeaheadRef.current &&
-                  countingGroupTypeaheadRef.current.clear();
-              }
-            }}
-          />
+      <div className={classes.filtersContainer}>
+        <div className={classes.filters}>
+          <div className={classes.filter}>
+            <span className={classes.typeaheadLabel}>People who voted for</span>
+            <Typeahead
+              id="candidate-filter-typeahead"
+              ref={candidateTypeaheadRef}
+              className={classes.typeahead}
+              placeholder="anyone"
+              options={candidateOptions}
+              selected={selectedCandidateFilter}
+              onChange={handleCandidateFilterChange}
+              positionFixed
+              clearButton
+              filterBy={['label', 'contestName', 'alternativeContestNames']}
+              renderMenu={CandidateTypeaheadMenu}
+              onBlur={() => {
+                if (selectedCandidateFilter.length === 0) {
+                  candidateTypeaheadRef.current &&
+                    candidateTypeaheadRef.current.clear();
+                }
+              }}
+            />
+          </div>
+          <div className={classes.filter}>
+            <span className={classes.typeaheadLabel}>and voted via</span>
+            <Typeahead
+              id="counting-group-filter-typeahead"
+              ref={countingGroupTypeaheadRef}
+              className={classes.typeahead}
+              placeholder="any method"
+              options={countingGroupOptions}
+              selected={selectedCountingGroupOptions}
+              onChange={handleCountingGroupFilterChange}
+              positionFixed
+              clearButton
+              onBlur={() => {
+                if (selectedCountingGroupOptions.length === 0) {
+                  countingGroupTypeaheadRef.current &&
+                    countingGroupTypeaheadRef.current.clear();
+                }
+              }}
+            />
+          </div>
         </div>
       </div>
     </>
