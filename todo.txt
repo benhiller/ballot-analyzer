@@ -1,6 +1,7 @@
 functionality:
 - allow filtering by votes across multiple races (or single race for races with numVotes > 1). or choose multiple candidates in 1 race and compare how their voters voted in other races
 - only hide contest with filtered candidate if numVotes for contest is 1! otherwise results are interesting
+- filter by VBM vs e-day, precinct, district, ballot type (could be interesting for NPP vs registered dems in dem primary)
 
 ui:
 - also indicate diff in bar chart? maybe too noisy
