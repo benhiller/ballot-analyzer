@@ -13,30 +13,39 @@ import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
 const useStyles = createUseStyles({
   titleContainer: {
     margin: '-20px -20px 15px',
-    padding: '15px 20px 20px',
+    padding: '15px 20px 15px',
     background:
       'linear-gradient(90deg, rgba(14,82,198,1) 25%, rgba(190,36,51,1) 75%)',
     color: 'white',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    flexDirection: 'column',
+    '@media (min-width: 1024px)': {
+      flexDirection: 'row',
+      width: 'auto',
+    },
   },
   title: {
     fontSize: '28px',
     fontWeight: 600,
     display: 'inline',
     marginTop: '4px',
-    marginBottom: 0,
+    marginBottom: '10px',
+    '@media (min-width: 1024px)': {
+      marginBottom: 0,
+    },
   },
   electionDropdown: {
-    width: 'auto',
+    '@media (min-width: 1024px)': {
+      width: 'auto',
+    },
   },
-  filterContainer: {
+  filtersContainer: {
     display: 'flex',
     justifyContent: 'center',
   },
   filters: {
-    width: '480px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
@@ -48,11 +57,8 @@ const useStyles = createUseStyles({
     marginRight: '5px',
   },
   typeahead: {
-    'display': 'inline-block',
-    'width': '300px',
-    '& .rbt-menu': {
-      width: '450px !important',
-    },
+    display: 'inline-block',
+    width: '300px',
     '& .dropdown-header': {
       padding: '3px 1rem',
     },
@@ -177,7 +183,6 @@ const FilterControls = ({
               options={candidateOptions}
               selected={selectedCandidateFilter}
               onChange={handleCandidateFilterChange}
-              positionFixed
               clearButton
               filterBy={['label', 'contestName', 'alternativeContestNames']}
               renderMenu={CandidateTypeaheadMenu}
@@ -199,7 +204,6 @@ const FilterControls = ({
               options={countingGroupOptions}
               selected={selectedCountingGroupOptions}
               onChange={handleCountingGroupFilterChange}
-              positionFixed
               clearButton
               onBlur={() => {
                 if (selectedCountingGroupOptions.length === 0) {

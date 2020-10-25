@@ -3,18 +3,18 @@ import { createUseStyles } from 'react-jss';
 
 // From https://projects.lukehaas.me/css-loaders/
 const useStyles = createUseStyles({
-  'loader': {
-    'fontSize': '10px',
-    'margin': '50px auto',
-    'textIndent': '-9999em',
-    'width': '11em',
-    'height': '11em',
-    'borderRadius': '50%',
-    'background':
+  loader: {
+    fontSize: '10px',
+    margin: '50px auto',
+    textIndent: '-9999em',
+    width: '11em',
+    height: '11em',
+    borderRadius: '50%',
+    background:
       'linear-gradient(to right, rgba(101,69,125,1) 0%, rgba(190,36,51,1) 40%, rgba(190,36,51,1) 50%, rgba(255, 255, 255, 0) 50%)',
-    'position': 'relative',
-    'animation': '$load3 1.4s infinite linear',
-    'transform': 'translateZ(0)',
+    position: 'relative',
+    animation: '$load3 1.4s infinite linear',
+    transform: 'translateZ(0)',
     '&:before': {
       width: '50%',
       height: '50%',

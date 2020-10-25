@@ -9,6 +9,7 @@ ui:
 - Allow clicking on a candidate row to apply them as a filter?
 - tooltip explanation for unknown
 - polish name of election in filter dropdown
+- test on iphone
 
 data:
 - RCV after rank 1 has IsVote = False. need to include that if we want to take 2nd, 3rd, etc choice into account

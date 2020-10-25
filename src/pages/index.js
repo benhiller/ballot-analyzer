@@ -37,18 +37,18 @@ const useStyles = createUseStyles({
       fontFamily: 'Inter, Helvetica, sans-serif',
     },
   },
-  'container': {
+  container: {
     margin: '20px',
   },
-  'row': {
-    'display': 'flex',
-    'flexDirection': 'column',
-    'margin': '0 -10px',
+  row: {
+    display: 'flex',
+    flexDirection: 'column',
+    margin: '0 -10px',
     '@media (min-width: 1024px)': {
       flexDirection: 'row',
     },
   },
-  'contest': {
+  contest: {
     flex: '0.5 1 0%',
   },
 });

@@ -25,8 +25,8 @@ const useStyles = createUseStyles({
     fontWeight: 'bold',
   },
   paginationToggle: {
-    'color': '#888',
-    'fontSize': '14px',
+    color: '#888',
+    fontSize: '14px',
     '&:hover': {
       color: '#555',
       cursor: 'pointer',
