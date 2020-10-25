@@ -340,16 +340,34 @@ function HomePage({
       ))}
       <div className={classes.footer}>
         <p>
-          Created by <a href="https://github.com/benhiller">Ben Hiller</a> with
-          data from the{' '}
-          <a href="https://sfelections.sfgov.org/data-and-maps">
+          Created by{' '}
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://github.com/benhiller"
+          >
+            Ben Hiller
+          </a>{' '}
+          with data from the{' '}
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://sfelections.sfgov.org/data-and-maps"
+          >
             SF Department of Elections
           </a>
           .
         </p>
         <p>
           View the source on{' '}
-          <a href="https://github.com/benhiller/ballot-analyzer">GitHub</a>.
+          <a
+            target="_blank"
+            rel="noreferrer"
+            href="https://github.com/benhiller/ballot-analyzer"
+          >
+            GitHub
+          </a>
+          .
         </p>
       </div>
     </div>
