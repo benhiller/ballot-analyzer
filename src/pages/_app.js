@@ -1,7 +1,6 @@
 import React from 'react';
 
-import 'bootstrap/dist/css/bootstrap.css';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
+import 'src/css/reset.css';
 
 export default function MyApp({ Component, pageProps }) {
   return <Component {...pageProps} />;
