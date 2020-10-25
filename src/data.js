@@ -102,16 +102,19 @@ export async function getContestResults(query) {
 
   let contestsToVotes = {};
   if (query.candidate) {
-    const distinctVotes = await applyCandidateFilter(
-      knex('vote')
-        .count(knex.raw('DISTINCT(tabulator_id, batch_id, record_id)'), {
-          as: 'distinct_votes',
-        })
-        .select('contest_id')
-        .where('election_id', electionId)
-        .groupBy('contest_id'),
-      query.candidate,
-    );
+    const distinctVotes = await knex
+      .count()
+      .select('contest_id')
+      .from(
+        applyCandidateFilter(
+          knex('vote')
+            .distinct(['tabulator_id', 'batch_id', 'record_id'])
+            .select('contest_id')
+            .where('election_id', electionId),
+          query.candidate,
+        ).as('distinct_votes'),
+      )
+      .groupBy('contest_id');
     contestsToVotes = Object.fromEntries(
       distinctVotes.map((row) => [
         row.contest_id.toString(),
