@@ -7,7 +7,6 @@ ui:
 - Separate races by type? Group presidential primaries, house, state leg, props, etc?
 - Allow clicking on a candidate row to apply them as a filter?
 - tooltip explanation for unknown
-- clear typeahead if it has input but nothing selected on blur
 - polish name of election in filter dropdown
 
 data:

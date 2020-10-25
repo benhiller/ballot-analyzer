@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { createUseStyles } from 'react-jss';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
@@ -47,6 +47,7 @@ const FilterControls = ({
   onChangeCandidateFilter,
 }) => {
   const classes = useStyles();
+  const candidateTypeaheadRef = useRef(null);
 
   const candidateOptions = [];
   const selectedCandidateFilter = [];
@@ -119,6 +120,7 @@ const FilterControls = ({
         <span className={classes.typeaheadLabel}>People who voted for</span>
         <Typeahead
           id="candidate-filter-typeahead"
+          ref={candidateTypeaheadRef}
           className={classes.typeahead}
           placeholder="anyone"
           options={candidateOptions}
@@ -128,6 +130,12 @@ const FilterControls = ({
           clearButton
           filterBy={['label', 'contestName', 'alternativeContestNames']}
           renderMenu={CandidateTypeaheadMenu}
+          onBlur={() => {
+            if (selectedCandidateFilter.length === 0) {
+              candidateTypeaheadRef.current &&
+                candidateTypeaheadRef.current.clear();
+            }
+          }}
         />
       </div>
     </>
