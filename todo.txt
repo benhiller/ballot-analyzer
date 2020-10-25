@@ -1,13 +1,15 @@
 functionality:
-- allow filtering by votes across multiple races (or single race for races with numVotes > 1). or choose multiple candidates in 1 race and compare how their voters voted in other races
-- filter by precinct (or district?), ballot type (could be interesting for NPP vs registered dems in dem primary)
+- allow filtering by votes across multiple races (or single race for races with numVotes > 1)
+- choose multiple candidates in 1 race and compare how their voters voted in other races
+* filter by precinct (or district?)
+- filter by ballot type (could be interesting for NPP vs registered dems in dem primary)
 
 ui:
-- tooltip explanation for unknown
-- Allow clicking on a candidate row to apply them as a filter?
-- also indicate diff in bar chart? maybe too noisy
+* tooltip explanation for unknown
+* Allow clicking on a candidate row to apply them as a filter?
+* also indicate diff in bar chart? maybe too noisy
 - Separate races by type? Group presidential primaries, house, state leg, props, etc?
-- test on iphone
+* test on iphone
   - try to break up rows into two rows on iphone?
 
 data:
