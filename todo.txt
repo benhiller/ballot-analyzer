@@ -2,6 +2,7 @@ functionality:
 - allow filtering by votes across multiple races (or single race for races with numVotes > 1)
 - choose multiple candidates in 1 race and compare how their voters voted in other races
 - filter by ballot type (could be interesting for NPP vs registered dems in dem primary)
+- should i use getStaticProps?
 
 ui:
 * tooltip explanation for unknown
