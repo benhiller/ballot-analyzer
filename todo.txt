@@ -1,7 +1,6 @@
 functionality:
 - allow filtering by votes across multiple races (or single race for races with numVotes > 1)
 - choose multiple candidates in 1 race and compare how their voters voted in other races
-* filter by precinct (or district?)
 - filter by ballot type (could be interesting for NPP vs registered dems in dem primary)
 
 ui:
@@ -14,9 +13,9 @@ ui:
 - use 'tnum'?
 
 data:
+* generate DistrictPrecinctPortionManifest.json for 2019 results. should be same precincts as 2020 election, so it should be doable
 - RCV after rank 1 has IsVote = False. need to include that if we want to take 2nd, 3rd, etc choice into account
 - separate out undervotes when filtering
-- generate DistrictTypeManifest.json, DistrictManifest.json, DistrictPrecinctPortionManifest.json for 2019 results. should be same precincts as 2020 election, so it should be doable
 
 bugs:
 - handle invalid election id in URL. maybe use election date instead? or just use default election instead
