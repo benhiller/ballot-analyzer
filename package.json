@@ -5,6 +5,13 @@
   "repository": "git@github.com:benhiller/ballot-analyzer.git",
   "author": "bhiller <benhiller@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "import-data": "node scripts/import_data.js",
+    "generate-district-precinct-mapping": "node scripts/generate_district_precinct_portion_map.js"
+  },
   "dependencies": {
     "@next/bundle-analyzer": "^9.5.5",
     "classnames": "^2.2.6",
@@ -20,13 +27,6 @@
     "sqlite3": "^5.0.0",
     "styled-jsx": "^3.3.1",
     "swr": "^0.3.5"
-  },
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "import-data": "node scripts/import_data.js",
-    "generate-district-precinct-mapping": "node scripts/generate_district_precinct_portion_map.js"
   },
   "devDependencies": {
     "JSONStream": "^1.3.5",
