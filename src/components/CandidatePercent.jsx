@@ -15,7 +15,9 @@ const useStyles = createUseStyles({
   tripleDigitPctChange: {
     width: '75px',
   },
-
+  pctNoChange: {
+    textAlign: 'center',
+  },
   pctIncrease: {
     color: '#4fb061',
   },
@@ -37,7 +39,7 @@ const CandidatePercent = ({
   let percentChange = 0;
   if (hasFiltersApplied) {
     const unfilteredPercent = candidate.unfilteredVotes / unfilteredTotalVotes;
-    percentChange = candidatePercent - unfilteredPercent;
+    percentChange = ((candidatePercent - unfilteredPercent) * 100).toFixed(1);
   }
 
   const formattedPercent = (candidatePercent * 100).toFixed(1) + '%';
@@ -48,7 +50,10 @@ const CandidatePercent = ({
     changePrefix = '\u2193';
   }
   const formattedChange =
-    '(' + changePrefix + (Math.abs(percentChange) * 100).toFixed(1) + ')';
+    // eslint-disable-next-line eqeqeq
+    percentChange == 0
+      ? '-'
+      : '(' + changePrefix + Math.abs(percentChange) + ')';
 
   return (
     <>
@@ -62,6 +67,8 @@ const CandidatePercent = ({
             [classes.tripleDigitPctChange]: maxPercentChange === 1.0,
             [classes.pctIncrease]: percentChange > 0,
             [classes.pctDecrease]: percentChange < 0,
+            // eslint-disable-next-line eqeqeq
+            [classes.pctNoChange]: percentChange == 0,
           })}
         >
           {' '}
