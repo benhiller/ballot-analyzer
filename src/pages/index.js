@@ -271,12 +271,17 @@ function HomePage({
   return (
     <div className={classes.container}>
       <Head>
+        <link rel="preconnect" href="https://fonts.gstatic.com/" crossOrigin />
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Inter"
+          href="https://fonts.googleapis.com/css?family=Inter&display=swap"
         />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="description"
+          content="View San Francisco election results and filter them by various dimensions."
+        />
         <title>SF Ballot Analyzer</title>
       </Head>
       <FilterControls
