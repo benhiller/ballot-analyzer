@@ -41,10 +41,27 @@ export async function getAllElections() {
   }));
 }
 
+export async function getAllCountingGroups() {
+  const groups = await knex('counting_group')
+    .select({
+      election_id: 'counting_group.election_id',
+      group_id: 'counting_group.id',
+      group_name: 'counting_group.name',
+    })
+    .orderBy('id', 'asc');
+
+  return groups.map((group) => ({
+    id: group.group_id.toString(),
+    name: group.group_name,
+    electionId: group.election_id.toString(),
+  }));
+}
+
 export async function getFilterPayload() {
   const candidates = await getAllCandidates();
   const elections = await getAllElections();
-  return { candidates, elections };
+  const countingGroups = await getAllCountingGroups();
+  return { candidates, elections, countingGroups };
 }
 
 export async function getContestResults(query) {
@@ -77,6 +94,10 @@ export async function getContestResults(query) {
 
   if (query.candidate) {
     votesQuery = applyCandidateFilter(votesQuery, query.candidate);
+  }
+
+  if (query.countingGroup) {
+    votesQuery = votesQuery.where({ counting_group_id: query.countingGroup });
   }
 
   let contestsToVotes = {};

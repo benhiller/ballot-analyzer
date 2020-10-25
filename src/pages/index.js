@@ -136,6 +136,10 @@ function HomePage({
     router.query?.candidate || null,
   );
 
+  const [countingGroupFilter, setCountingGroupFilter] = useState(
+    router.query?.countingGroup || null,
+  );
+
   const [selectedElection, setSelectedElection] = useState(
     router.query?.election || initialFilterPayload.elections[0].id,
   );
@@ -185,10 +189,18 @@ function HomePage({
     );
   }
 
-  const updateUrl = (selectedElection, candidateFilter) => {
+  const updateUrl = (
+    selectedElection,
+    candidateFilter,
+    countingGroupFilter,
+  ) => {
     const urlQuery = {};
     if (candidateFilter) {
       urlQuery.candidate = candidateFilter;
+    }
+
+    if (countingGroupFilter) {
+      urlQuery.countingGroup = countingGroupFilter;
     }
 
     if (selectedElection !== filterPayload.elections[0].id) {
@@ -213,6 +225,16 @@ function HomePage({
     updateUrl(selectedElection, candidateFilter);
   };
 
+  const handleCountingGroupFilterChange = (countingGroupFilter) => {
+    if (countingGroupFilter) {
+      setCountingGroupFilter(countingGroupFilter);
+    } else {
+      setCountingGroupFilter(null);
+    }
+
+    updateUrl(selectedElection, candidateFilter, countingGroupFilter);
+  };
+
   const handleElectionChange = (e) => {
     const electionId = e.target.value;
     if (electionId === selectedElection) {
@@ -221,6 +243,7 @@ function HomePage({
 
     setSelectedElection(electionId);
     setCandidateFilter(null);
+    setCountingGroupFilter(null);
     updateUrl(electionId, null);
   };
 
@@ -238,7 +261,9 @@ function HomePage({
         filterPayload={filterPayload}
         selectedElection={selectedElection}
         candidateFilter={candidateFilter}
+        countingGroupFilter={countingGroupFilter}
         onChangeCandidateFilter={handleCandidateFilterChange}
+        onChangeCountingGroupFilter={handleCountingGroupFilterChange}
         onChangeElection={handleElectionChange}
       />
       {!groupedContests.length && <Spinner />}

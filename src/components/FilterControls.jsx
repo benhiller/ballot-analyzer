@@ -11,17 +11,19 @@ import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
 
 const useStyles = createUseStyles({
   electionDropdown: {
-    'width': '300px',
     'whiteSpace': 'nowrap',
     'marginBottom': '15px',
     '& span': {
       marginRight: '5px',
     },
-    '& select': {
-      width: 'auto',
-    },
   },
   filters: {
+    width: '480px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+  },
+  filter: {
     marginBottom: '10px',
   },
   typeaheadLabel: {
@@ -46,14 +48,19 @@ const FilterControls = ({
   filterPayload,
   selectedElection,
   candidateFilter,
+  countingGroupFilter,
   onChangeElection,
   onChangeCandidateFilter,
+  onChangeCountingGroupFilter,
 }) => {
   const classes = useStyles();
   const candidateTypeaheadRef = useRef(null);
+  const countingGroupTypeaheadRef = useRef(null);
 
   const candidateOptions = [];
   const selectedCandidateFilter = [];
+  const countingGroupOptions = [];
+  const selectedCountingGroupOptions = [];
   let elections = [];
   if (filterPayload) {
     elections = filterPayload.elections;
@@ -96,6 +103,22 @@ const FilterControls = ({
         selectedCandidateFilter.push(option);
       }
     }
+
+    for (const countingGroup of filterPayload.countingGroups) {
+      if (countingGroup.electionId !== selectedElection) {
+        continue;
+      }
+
+      const option = {
+        id: countingGroup.id,
+        label: countingGroup.name,
+      };
+
+      countingGroupOptions.push(option);
+      if (option.id === countingGroupFilter) {
+        selectedCountingGroupOptions.push(option);
+      }
+    }
   }
 
   const handleCandidateFilterChange = (candidateFilters) => {
@@ -103,8 +126,13 @@ const FilterControls = ({
     onChangeCandidateFilter(candidateFilter?.id);
   };
 
+  const handleCountingGroupFilterChange = (countingGroupFilters) => {
+    const countingGroupFilter = countingGroupFilters[0];
+    onChangeCountingGroupFilter(countingGroupFilter?.id);
+  };
+
   return (
-    <>
+    <div className={classes.filters}>
       <div className={classes.electionDropdown}>
         <span>Election:</span>
         <select
@@ -119,7 +147,7 @@ const FilterControls = ({
           ))}
         </select>
       </div>
-      <div className={classes.filters}>
+      <div className={classes.filter}>
         <span className={classes.typeaheadLabel}>People who voted for</span>
         <Typeahead
           id="candidate-filter-typeahead"
@@ -141,7 +169,27 @@ const FilterControls = ({
           }}
         />
       </div>
-    </>
+      <div className={classes.filter}>
+        <span className={classes.typeaheadLabel}>and voted via</span>
+        <Typeahead
+          id="counting-group-filter-typeahead"
+          ref={countingGroupTypeaheadRef}
+          className={classes.typeahead}
+          placeholder="any method"
+          options={countingGroupOptions}
+          selected={selectedCountingGroupOptions}
+          onChange={handleCountingGroupFilterChange}
+          positionFixed
+          clearButton
+          onBlur={() => {
+            if (selectedCountingGroupOptions.length === 0) {
+              countingGroupTypeaheadRef.current &&
+                countingGroupTypeaheadRef.current.clear();
+            }
+          }}
+        />
+      </div>
+    </div>
   );
 };
 

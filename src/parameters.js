@@ -3,5 +3,5 @@ export const getUniversalQueryParams = (query) => {
 };
 
 export const hasFiltersApplied = (query) => {
-  return !!query.candidate;
+  return !!query.candidate || !!query.countingGroup;
 };
