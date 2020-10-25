@@ -4,12 +4,14 @@ import classNames from 'classnames';
 import css from 'styled-jsx/css';
 
 // TODO
+// - ui
 // - grouping for candidate typeahead
-// - highlight?
-// - deburr
-// - search substr rather than startsWith
 // - pagination?
 // - blank state
+// - highlight?
+// - filtering:
+// - deburr
+// - search substr rather than startsWith
 
 const styles = css`
   .root {
