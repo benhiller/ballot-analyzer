@@ -219,6 +219,7 @@ const FilterControls = ({
               selected={selectedCandidateFilter}
               onChange={handleCandidateFilterChange}
               clearButton
+              inputProps={{ spellCheck: false }}
               filterBy={['label', 'contestName', 'alternativeContestNames']}
               renderMenu={CandidateTypeaheadMenu}
               onBlur={() => {
@@ -240,6 +241,7 @@ const FilterControls = ({
               selected={selectedCountingGroupOptions}
               onChange={handleCountingGroupFilterChange}
               clearButton
+              inputProps={{ spellCheck: false }}
               onBlur={() => {
                 if (selectedCountingGroupOptions.length === 0) {
                   countingGroupTypeaheadRef.current &&
@@ -259,6 +261,7 @@ const FilterControls = ({
               selected={selectedDistrictOptions}
               onChange={handleDistrictFilterChange}
               clearButton
+              inputProps={{ spellCheck: false }}
               onBlur={() => {
                 if (selectedDistrictOptions.length === 0) {
                   districtTypeaheadRef.current &&
