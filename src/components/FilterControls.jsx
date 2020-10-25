@@ -12,19 +12,24 @@ import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
 
 const useStyles = createUseStyles({
   titleContainer: {
-    marginBottom: '15px',
+    margin: '-20px -20px 15px',
+    padding: '15px 20px 20px',
+    background:
+      'linear-gradient(90deg, rgba(14,82,198,1) 25%, rgba(190,36,51,1) 75%)',
+    color: 'white',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontSize: '28px',
     fontWeight: 600,
     display: 'inline',
-    marginBottom: '15px',
-    marginRight: '10px',
+    marginTop: '4px',
+    marginBottom: 0,
   },
   electionDropdown: {
-    position: 'relative',
     width: 'auto',
-    top: '-6px',
   },
   filters: {
     width: '480px',
