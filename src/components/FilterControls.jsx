@@ -7,6 +7,8 @@ import {
   alternativeContestNames,
   capitalizeName,
   humanReadableContest,
+  shouldRenderDistrict,
+  humanReadableDistrict,
 } from 'src/formatting';
 import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
 
@@ -76,18 +78,23 @@ const FilterControls = ({
   selectedElection,
   candidateFilter,
   countingGroupFilter,
+  districtFilter,
   onChangeElection,
   onChangeCandidateFilter,
   onChangeCountingGroupFilter,
+  onChangeDistrictFilter,
 }) => {
   const classes = useStyles();
   const candidateTypeaheadRef = useRef(null);
   const countingGroupTypeaheadRef = useRef(null);
+  const districtTypeaheadRef = useRef(null);
 
   const candidateOptions = [];
   const selectedCandidateFilter = [];
   const countingGroupOptions = [];
   const selectedCountingGroupOptions = [];
+  const districtOptions = [];
+  const selectedDistrictOptions = [];
   let elections = [];
   if (filterPayload) {
     elections = filterPayload.elections;
@@ -146,6 +153,26 @@ const FilterControls = ({
         selectedCountingGroupOptions.push(option);
       }
     }
+
+    for (const district of filterPayload.districts) {
+      if (district.electionId !== selectedElection) {
+        continue;
+      }
+
+      if (!shouldRenderDistrict(district)) {
+        continue;
+      }
+
+      const option = {
+        id: district.id,
+        label: humanReadableDistrict(district),
+      };
+
+      districtOptions.push(option);
+      if (option.id === districtFilter) {
+        selectedDistrictOptions.push(option);
+      }
+    }
   }
 
   const handleCandidateFilterChange = (candidateFilters) => {
@@ -156,6 +183,11 @@ const FilterControls = ({
   const handleCountingGroupFilterChange = (countingGroupFilters) => {
     const countingGroupFilter = countingGroupFilters[0];
     onChangeCountingGroupFilter(countingGroupFilter?.id);
+  };
+
+  const handleDistrictFilterChange = (districtFilters) => {
+    const districtFilter = districtFilters[0];
+    onChangeDistrictFilter(districtFilter?.id);
   };
 
   return (
@@ -212,6 +244,25 @@ const FilterControls = ({
                 if (selectedCountingGroupOptions.length === 0) {
                   countingGroupTypeaheadRef.current &&
                     countingGroupTypeaheadRef.current.clear();
+                }
+              }}
+            />
+          </div>
+          <div className={classes.filter}>
+            <span className={classes.typeaheadLabel}>and voted in</span>
+            <Typeahead
+              id="district-filter-typeahead"
+              ref={districtTypeaheadRef}
+              className={classes.typeahead}
+              placeholder="anywhere"
+              options={districtOptions}
+              selected={selectedDistrictOptions}
+              onChange={handleDistrictFilterChange}
+              clearButton
+              onBlur={() => {
+                if (selectedDistrictOptions.length === 0) {
+                  districtTypeaheadRef.current &&
+                    districtTypeaheadRef.current.clear();
                 }
               }}
             />

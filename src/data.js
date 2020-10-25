@@ -1,6 +1,6 @@
 import knex from 'src/knex';
 
-export async function getAllCandidates() {
+async function getAllCandidates() {
   const candidates = await knex('candidate')
     .select({
       election_id: 'candidate.election_id',
@@ -25,7 +25,7 @@ export async function getAllCandidates() {
   }));
 }
 
-export async function getAllElections() {
+async function getAllElections() {
   const elections = await knex('election')
     .select({
       election_id: 'election.id',
@@ -41,7 +41,7 @@ export async function getAllElections() {
   }));
 }
 
-export async function getAllCountingGroups() {
+async function getAllCountingGroups() {
   const groups = await knex('counting_group')
     .select({
       election_id: 'counting_group.election_id',
@@ -57,11 +57,33 @@ export async function getAllCountingGroups() {
   }));
 }
 
+async function getAllDistricts() {
+  const districts = await knex('district')
+    .select({
+      election_id: 'district.election_id',
+      district_id: 'district.id',
+      district_name: 'district.name',
+      district_type_name: 'district_type.name',
+    })
+    .join('district_type', 'district_type.id', '=', 'district.district_type_id')
+    .orderBy('district.id', 'asc');
+
+  return districts.map((district) => ({
+    id: district.district_id.toString(),
+    name: district.district_name,
+    type: district.district_type_name,
+    electionId: district.election_id.toString(),
+  }));
+}
+
 export async function getFilterPayload() {
-  const candidates = await getAllCandidates();
-  const elections = await getAllElections();
-  const countingGroups = await getAllCountingGroups();
-  return { candidates, elections, countingGroups };
+  const [candidates, elections, countingGroups, districts] = await Promise.all([
+    getAllCandidates(),
+    getAllElections(),
+    getAllCountingGroups(),
+    getAllDistricts(),
+  ]);
+  return { candidates, elections, countingGroups, districts };
 }
 
 export async function getContestResults(query) {
@@ -98,6 +120,18 @@ export async function getContestResults(query) {
 
   if (query.countingGroup) {
     votesQuery = votesQuery.where({ counting_group_id: query.countingGroup });
+  }
+
+  if (query.district) {
+    votesQuery = votesQuery.whereExists(
+      knex
+        .select('id')
+        .from('precinct_portion_district_assoc')
+        .whereRaw(
+          'vote.precinct_portion_id = precinct_portion_district_assoc.precinct_portion_id AND precinct_portion_district_assoc.district_id = ?',
+          [query.district],
+        ),
+    );
   }
 
   let contestsToVotes = {};

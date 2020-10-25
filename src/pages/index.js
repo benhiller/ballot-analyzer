@@ -161,7 +161,12 @@ function HomePage({
     router.query?.countingGroup || null,
   );
 
-  const hasFiltersApplied = candidateFilter || countingGroupFilter;
+  const [districtFilter, setDistrictFilter] = useState(
+    router.query?.district || null,
+  );
+
+  const hasFiltersApplied =
+    candidateFilter || countingGroupFilter || districtFilter;
 
   const [selectedElection, setSelectedElection] = useState(
     router.query?.election || initialFilterPayload.elections[0].id,
@@ -214,6 +219,7 @@ function HomePage({
     selectedElection,
     candidateFilter,
     countingGroupFilter,
+    districtFilter,
   ) => {
     const urlQuery = {};
     if (candidateFilter) {
@@ -222,6 +228,10 @@ function HomePage({
 
     if (countingGroupFilter) {
       urlQuery.countingGroup = countingGroupFilter;
+    }
+
+    if (districtFilter) {
+      urlQuery.district = districtFilter;
     }
 
     if (selectedElection !== filterPayload.elections[0].id) {
@@ -243,7 +253,12 @@ function HomePage({
       setCandidateFilter(null);
     }
 
-    updateUrl(selectedElection, candidateFilter);
+    updateUrl(
+      selectedElection,
+      candidateFilter,
+      countingGroupFilter,
+      districtFilter,
+    );
   };
 
   const handleCountingGroupFilterChange = (countingGroupFilter) => {
@@ -253,7 +268,27 @@ function HomePage({
       setCountingGroupFilter(null);
     }
 
-    updateUrl(selectedElection, candidateFilter, countingGroupFilter);
+    updateUrl(
+      selectedElection,
+      candidateFilter,
+      countingGroupFilter,
+      districtFilter,
+    );
+  };
+
+  const handleDistrictFilterChange = (districtFilter) => {
+    if (districtFilter) {
+      setDistrictFilter(districtFilter);
+    } else {
+      setDistrictFilter(null);
+    }
+
+    updateUrl(
+      selectedElection,
+      candidateFilter,
+      countingGroupFilter,
+      districtFilter,
+    );
   };
 
   const handleElectionChange = (e) => {
@@ -265,7 +300,8 @@ function HomePage({
     setSelectedElection(electionId);
     setCandidateFilter(null);
     setCountingGroupFilter(null);
-    updateUrl(electionId, null);
+    setDistrictFilter(null);
+    updateUrl(electionId, null, null, null);
   };
 
   return (
@@ -293,8 +329,10 @@ function HomePage({
         selectedElection={selectedElection}
         candidateFilter={candidateFilter}
         countingGroupFilter={countingGroupFilter}
+        districtFilter={districtFilter}
         onChangeCandidateFilter={handleCandidateFilterChange}
         onChangeCountingGroupFilter={handleCountingGroupFilterChange}
+        onChangeDistrictFilter={handleDistrictFilterChange}
         onChangeElection={handleElectionChange}
       />
       {loading && <Spinner />}

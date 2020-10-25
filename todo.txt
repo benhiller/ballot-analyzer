@@ -16,6 +16,7 @@ ui:
 data:
 - RCV after rank 1 has IsVote = False. need to include that if we want to take 2nd, 3rd, etc choice into account
 - separate out undervotes when filtering
+- generate DistrictTypeManifest.json, DistrictManifest.json, DistrictPrecinctPortionManifest.json for 2019 results. should be same precincts as 2020 election, so it should be doable
 
 bugs:
 - handle invalid election id in URL. maybe use election date instead? or just use default election instead
