@@ -3,11 +3,10 @@ functionality:
 - filter by precinct (or district?), ballot type (could be interesting for NPP vs registered dems in dem primary)
 
 ui:
+- tooltip explanation for unknown
+- Allow clicking on a candidate row to apply them as a filter?
 - also indicate diff in bar chart? maybe too noisy
 - Separate races by type? Group presidential primaries, house, state leg, props, etc?
-- Allow clicking on a candidate row to apply them as a filter?
-- tooltip explanation for unknown
-- polish name of election in filter dropdown
 - test on iphone
 
 data:
@@ -16,3 +15,6 @@ data:
 
 bugs:
 - handle invalid election id in URL. maybe use election date instead? or just use default election instead
+
+deploy:
+- make sure election name + date are modified in Election manifest

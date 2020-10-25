@@ -169,7 +169,7 @@ const FilterControls = ({
         >
           {elections.map((election) => (
             <option key={election.id} value={election.id}>
-              {election.name}
+              {election.date.slice(0, 4)} {election.name}
             </option>
           ))}
         </select>
