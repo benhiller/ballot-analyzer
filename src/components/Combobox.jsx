@@ -10,7 +10,6 @@ import css from 'styled-jsx/css';
 // - search substr rather than startsWith
 // - pagination?
 // - blank state
-// - clicking item not selecting it
 
 const styles = css`
   .root {
@@ -148,7 +147,7 @@ const Combobox = ({ id, label, options, selected, placeholder, onChange }) => {
           {...getInputProps()}
           placeholder={placeholder}
           spellCheck={false}
-          onFocus={() => openMenu()}
+          onClick={openMenu}
           onBlur={() => {
             if (selectedItem && inputValue !== selectedItem.label) {
               selectItem(null);
