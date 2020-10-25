@@ -222,6 +222,7 @@ const importVotes = async (
     'precinct_portion_id',
     'contest_id',
     'party_id',
+    'distinct_ballot',
   ];
   for (const idx of indexes) {
     try {
@@ -324,7 +325,13 @@ const importVotes = async (
   }
 
   for (const idx of indexes) {
-    await knex.raw(`CREATE INDEX vote_${idx}_index ON vote (${idx})`);
+    if (idx === 'distinct_ballot') {
+      await knex.raw(
+        `CREATE INDEX vote_${idx}_index ON vote (election_id, tabulator_id, batch_id, record_id, contest_id)`,
+      );
+    } else {
+      await knex.raw(`CREATE INDEX vote_${idx}_index ON vote (${idx})`);
+    }
   }
 
   await knex.raw('ANALYZE');
