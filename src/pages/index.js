@@ -316,7 +316,7 @@ function HomePage({
       {loading && <Spinner />}
       {!loading && groupedContests.length === 0 && (
         <div className={classes.blankState}>
-          No elections found. Try removing a filter.
+          No elections found. Try a different filter.
         </div>
       )}
       {groupedContests.map((contests, idx) => (
