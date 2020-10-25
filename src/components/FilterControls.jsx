@@ -59,6 +59,9 @@ const useStyles = createUseStyles({
   typeahead: {
     display: 'inline-block',
     width: '300px',
+    '& .rbt-menu': {
+      width: '450px !important',
+    },
     '& .dropdown-header': {
       padding: '3px 1rem',
     },
