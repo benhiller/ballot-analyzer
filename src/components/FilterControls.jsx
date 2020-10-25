@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import css from 'styled-jsx/css';
 
 import {
@@ -34,6 +34,7 @@ const styles = css`
   }
 
   .title {
+    line-height: 1.1;
     font-size: 28px;
     font-weight: 200;
     display: inline;
@@ -48,16 +49,33 @@ const styles = css`
 
   .electionDropdown {
     width: 100%;
-    height: 40px;
+    height: 38px;
     padding: 5px 10px;
+    background-color: #fff;
+    appearance: none;
+    -webkit-appearance: none;
     border-radius: 4px;
-    border-color: #fff;
-    border-width: 0 10px 0 0;
+    border: 1px solid #fff;
+    padding-right: 28px;
   }
   @media (min-width: 1024px) {
     .electionDropdown {
       width: auto;
     }
+  }
+
+  .dropdownContainer {
+    position: relative;
+  }
+
+  .dropdownChevron {
+    position: absolute;
+    right: 0;
+    color: black;
+    top: 0;
+    bottom: 0;
+    margin-top: 14px;
+    margin-right: 12px;
   }
 
   .filtersContainer {
@@ -71,26 +89,13 @@ const styles = css`
     align-items: flex-end;
   }
 
+  .filterHeader {
+    width: 100%;
+    text-align: center;
+  }
+
   .filter {
     margin-bottom: 10px;
-  }
-
-  .typeaheadLabel {
-    margin-right: 5px;
-  }
-
-  :global(.typeahead) {
-    display: inline-block;
-    width: 300px;
-  }
-  :global(.typeahead .rbt-menu) {
-    width: 450px !important;
-  }
-  :global(.typeahead .dropdown-header) {
-    padding: 3px 1rem;
-  }
-  :global(.typeahead .rbt-input) {
-    text-overflow: ellipsis;
   }
 `;
 
@@ -105,16 +110,12 @@ const FilterControls = ({
   onChangeCountingGroupFilter,
   onChangeDistrictFilter,
 }) => {
-  const candidateTypeaheadRef = useRef(null);
-  const countingGroupTypeaheadRef = useRef(null);
-  const districtTypeaheadRef = useRef(null);
-
   const candidateOptions = [];
-  const selectedCandidateFilter = [];
+  let selectedCandidateFilter = null;
   const countingGroupOptions = [];
-  const selectedCountingGroupOptions = [];
+  let selectedCountingGroupOption = null;
   const districtOptions = [];
-  const selectedDistrictOptions = [];
+  let selectedDistrictOption = null;
   let elections = [];
   if (filterPayload) {
     elections = filterPayload.elections;
@@ -154,7 +155,7 @@ const FilterControls = ({
 
       candidateOptions.push(option);
       if (option.id === candidateFilter) {
-        selectedCandidateFilter.push(option);
+        selectedCandidateFilter = option;
       }
     }
 
@@ -170,7 +171,7 @@ const FilterControls = ({
 
       countingGroupOptions.push(option);
       if (option.id === countingGroupFilter) {
-        selectedCountingGroupOptions.push(option);
+        selectedCountingGroupOption = option;
       }
     }
 
@@ -190,23 +191,20 @@ const FilterControls = ({
 
       districtOptions.push(option);
       if (option.id === districtFilter) {
-        selectedDistrictOptions.push(option);
+        selectedDistrictOption = option;
       }
     }
   }
 
-  const handleCandidateFilterChange = (candidateFilters) => {
-    const candidateFilter = candidateFilters[0];
+  const handleCandidateFilterChange = (candidateFilter) => {
     onChangeCandidateFilter(candidateFilter?.id);
   };
 
-  const handleCountingGroupFilterChange = (countingGroupFilters) => {
-    const countingGroupFilter = countingGroupFilters[0];
+  const handleCountingGroupFilterChange = (countingGroupFilter) => {
     onChangeCountingGroupFilter(countingGroupFilter?.id);
   };
 
-  const handleDistrictFilterChange = (districtFilters) => {
-    const districtFilter = districtFilters[0];
+  const handleDistrictFilterChange = (districtFilter) => {
     onChangeDistrictFilter(districtFilter?.id);
   };
 
@@ -222,15 +220,15 @@ const FilterControls = ({
       onChangeElection(elections[0].id);
     }
 
-    if (candidateFilter && selectedCandidateFilter.length === 0) {
+    if (candidateFilter && !selectedCandidateFilter) {
       onChangeCandidateFilter(null);
     }
 
-    if (countingGroupFilter && selectedCountingGroupOptions.length === 0) {
+    if (countingGroupFilter && !selectedCountingGroupOption) {
       onChangeCountingGroupFilter(null);
     }
 
-    if (districtFilter && selectedDistrictOptions.length === 0) {
+    if (districtFilter && !selectedDistrictOption) {
       onChangeDistrictFilter(null);
     }
   });
@@ -240,80 +238,64 @@ const FilterControls = ({
       <style jsx>{styles}</style>
       <div className="titleContainer">
         <h1 className="title">San Francisco Ballot Analyzer</h1>
-        <select
-          className="electionDropdown"
-          value={selectedElection}
-          onChange={handleElectionChange}
-        >
-          {elections.map((election) => (
-            <option key={election.id} value={election.id}>
-              {election.date.slice(0, 4)} {election.name}
-            </option>
-          ))}
-        </select>
+        <div className="dropdownContainer">
+          <select
+            className="electionDropdown"
+            value={selectedElection}
+            onChange={handleElectionChange}
+          >
+            {elections.map((election) => (
+              <option key={election.id} value={election.id}>
+                {election.date.slice(0, 4)} {election.name}
+              </option>
+            ))}
+          </select>
+          <img
+            className="dropdownChevron"
+            src="/chevron.png"
+            srcSet="/chevron@2x.png 2x"
+          />
+        </div>
       </div>
-      <Combobox />
       <div className="filtersContainer">
         <div className="filters">
+          <div className="filter filterHeader">
+            <span>
+              <b>Filter results to:</b>
+            </span>
+          </div>
           <div className="filter">
-            <span className="typeaheadLabel">People who voted for</span>
-            <div
+            <Combobox
               id="candidate-filter-typeahead"
-              ref={candidateTypeaheadRef}
               className="typeahead"
+              label="People who voted for"
               placeholder="anyone"
               options={candidateOptions}
               selected={selectedCandidateFilter}
               onChange={handleCandidateFilterChange}
-              clearButton
-              inputProps={{ spellCheck: false }}
               filterBy={['label', 'contestName', 'alternativeContestNames']}
-              onBlur={() => {
-                if (selectedCandidateFilter.length === 0) {
-                  candidateTypeaheadRef.current &&
-                    candidateTypeaheadRef.current.clear();
-                }
-              }}
             />
           </div>
           <div className="filter">
-            <span className="typeaheadLabel">and voted via</span>
-            <div
+            <Combobox
               id="counting-group-filter-typeahead"
-              ref={countingGroupTypeaheadRef}
               className="typeahead"
+              label="and voted via"
               placeholder="any method"
               options={countingGroupOptions}
-              selected={selectedCountingGroupOptions}
+              selected={selectedCountingGroupOption}
               onChange={handleCountingGroupFilterChange}
-              clearButton
-              inputProps={{ spellCheck: false }}
-              onBlur={() => {
-                if (selectedCountingGroupOptions.length === 0) {
-                  countingGroupTypeaheadRef.current &&
-                    countingGroupTypeaheadRef.current.clear();
-                }
-              }}
             />
           </div>
           <div className="filter">
-            <span className="typeaheadLabel">and voted in</span>
-            <div
+            <Combobox
               id="district-filter-typeahead"
-              ref={districtTypeaheadRef}
               className="typeahead"
+              label="and voted in"
               placeholder="anywhere"
               options={districtOptions}
-              selected={selectedDistrictOptions}
+              selected={selectedDistrictOption}
               onChange={handleDistrictFilterChange}
-              clearButton
-              inputProps={{ spellCheck: false }}
-              onBlur={() => {
-                if (selectedDistrictOptions.length === 0) {
-                  districtTypeaheadRef.current &&
-                    districtTypeaheadRef.current.clear();
-                }
-              }}
             />
           </div>
         </div>

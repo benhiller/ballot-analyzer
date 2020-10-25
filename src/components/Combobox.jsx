@@ -1,65 +1,182 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCombobox } from 'downshift';
+import classNames from 'classnames';
 import css from 'styled-jsx/css';
 
-const items = ['Apple', 'Banana', 'Carrot'];
+// TODO
+// - grouping for candidate typeahead
+// - highlight?
+// - deburr
+// - search substr rather than startsWith
+// - pagination?
+// - blank state
+// - clicking item not selecting it
 
 const styles = css`
-  .menu {
+  .root {
     position: relative;
+  }
+
+  label {
+    margin-right: 5px;
+  }
+
+  .input {
+    position: relative;
+    display: inline-block;
+    width: 300px;
+  }
+
+  .input input {
+    width: 100%;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 6px 10px;
+    color: #333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .input.selected input {
+    padding-right: 35px;
+  }
+
+  .clear {
+    width: 35px;
+    position: absolute;
+    border: 0;
+    background-color: transparent;
+    font-size: 24px;
+    font-weight: 700;
+    right: 0;
+    margin-top: 0px;
+    color: #000;
+    opacity: 0.5;
+    line-height: 1.4;
+  }
+
+  .clear:hover {
+    opacity: 0.75;
+  }
+
+  .menu {
+    display: none;
+    position: absolute;
+    right: -150px;
+    background-color: white;
+    z-index: 100;
     width: 450px;
-    border: 1px solid #888;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 8px 0;
+  }
+
+  .openMenu {
+    display: block;
+  }
+
+  .menu li {
+    padding: 4px 25px;
+  }
+
+  .menu li.selectedRow {
+    background-color: #007bff;
+    color: white;
   }
 `;
 
-const Combobox = () => {
-  const [inputItems, setInputItems] = useState(items);
+const Combobox = ({ id, label, options, selected, placeholder, onChange }) => {
+  const [inputItems, setInputItems] = useState(options);
   const {
     isOpen,
-    getToggleButtonProps,
     getLabelProps,
     getMenuProps,
     getInputProps,
     getComboboxProps,
     highlightedIndex,
+    selectedItem,
+    inputValue,
+    setHighlightedIndex,
     openMenu,
+    closeMenu,
+    selectItem,
     getItemProps,
   } = useCombobox({
+    id,
     items: inputItems,
+    itemToString: (item) => {
+      return item ? item.label : '';
+    },
     onInputValueChange: ({ inputValue }) => {
       setInputItems(
-        items.filter((item) =>
-          item.toLowerCase().startsWith(inputValue.toLowerCase()),
+        options.filter((item) =>
+          item.label.toLowerCase().startsWith(inputValue.toLowerCase()),
         ),
       );
     },
+    onSelectedItemChange: ({ selectedItem }) => {
+      closeMenu();
+      onChange(selectedItem);
+    },
+    selectedItem: selected || null,
   });
-  console.log(isOpen);
+
+  // Update inputItems when options changes
+  useEffect(() => {
+    setInputItems(
+      options.filter((item) =>
+        item.label.toLowerCase().startsWith(inputValue.toLowerCase()),
+      ),
+    );
+  }, [options, inputValue]);
+
+  useEffect(() => {
+    if (isOpen && inputItems.length === 1) {
+      setHighlightedIndex(0);
+    }
+  }, [inputItems, isOpen, setHighlightedIndex]);
+
   return (
-    <div>
+    <div className="root">
       <style jsx>{styles}</style>
-      <label {...getLabelProps()}>Choose an element:</label>
-      <div {...getComboboxProps()}>
-        <input {...getInputProps()} onFocus={() => openMenu()} />
-        <button
-          type="button"
-          {...getToggleButtonProps()}
-          aria-label="toggle menu"
-        >
-          &#8595;
-        </button>
+      <label {...getLabelProps()}>{label}</label>
+      <div
+        className={classNames('input', { selected: selectedItem })}
+        {...getComboboxProps()}
+      >
+        <input
+          {...getInputProps()}
+          placeholder={placeholder}
+          spellCheck={false}
+          onFocus={() => openMenu()}
+          onBlur={() => {
+            if (selectedItem && inputValue !== selectedItem.label) {
+              selectItem(null);
+            }
+          }}
+        />
+        {selectedItem && (
+          <button
+            aria-label="Clear"
+            className="clear"
+            onClick={() => selectItem(null)}
+          >
+            <span>{'\u00d7'}</span>
+          </button>
+        )}
       </div>
-      <ul {...getMenuProps()} className="menu">
+      <ul
+        {...getMenuProps()}
+        className={classNames('menu', { openMenu: isOpen })}
+      >
         {isOpen &&
           inputItems.map((item, index) => (
             <li
-              style={
-                highlightedIndex === index ? { backgroundColor: '#bde4ff' } : {}
-              }
+              className={highlightedIndex === index ? 'selectedRow' : null}
               key={`${item}${index}`}
               {...getItemProps({ item, index })}
             >
-              {item}
+              {item.label}
             </li>
           ))}
       </ul>
