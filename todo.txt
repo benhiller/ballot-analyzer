@@ -4,7 +4,6 @@ functionality:
 
 ui:
 - also indicate diff in bar chart? maybe too noisy
-- group options in candidate typeahead by contest?
 - Separate races by type? Group presidential primaries, house, state leg, props, etc?
 - Allow clicking on a candidate row to apply them as a filter?
 - tooltip explanation for unknown

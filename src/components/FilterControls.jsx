@@ -2,7 +2,12 @@ import React from 'react';
 import { createUseStyles } from 'react-jss';
 import { Typeahead } from 'react-bootstrap-typeahead';
 
-import { capitalizeName, humanReadableContest } from 'src/formatting';
+import {
+  alternativeContestNames,
+  capitalizeName,
+  humanReadableContest,
+} from 'src/formatting';
+import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
 
 const useStyles = createUseStyles({
   electionDropdown: {
@@ -27,6 +32,9 @@ const useStyles = createUseStyles({
     'width': '300px',
     '& .rbt-menu': {
       width: '450px !important',
+    },
+    '& .dropdown-header': {
+      padding: '3px 1rem',
     },
   },
 });
@@ -72,6 +80,11 @@ const FilterControls = ({
           ' (' +
           humanReadableContest(candidate.contest.name) +
           ')',
+        menuLabel: capitalizeName(candidate.name),
+        contestName: humanReadableContest(candidate.contest.name),
+        alternativeContestNames: alternativeContestNames(
+          candidate.contest.name,
+        ).join(' '),
       };
 
       candidateOptions.push(option);
@@ -113,6 +126,8 @@ const FilterControls = ({
           onChange={handleCandidateFilterChange}
           positionFixed
           clearButton
+          filterBy={['label', 'contestName', 'alternativeContestNames']}
+          renderMenu={CandidateTypeaheadMenu}
         />
       </div>
     </>

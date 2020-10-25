@@ -1,4 +1,4 @@
-export function capitalizeName(name) {
+export const capitalizeName = (name) => {
   return name
     .split(' ')
     .map((token) => {
@@ -21,7 +21,7 @@ export function capitalizeName(name) {
       return capitalizedToken;
     })
     .join(' ');
-}
+};
 
 const humanReadableParty = (partyName) => {
   switch (partyName) {
@@ -42,7 +42,7 @@ const humanReadableParty = (partyName) => {
   }
 };
 
-export function humanReadableContest(name) {
+export const humanReadableContest = (name) => {
   if (name.startsWith('President')) {
     const party = name.slice('President '.length);
 
@@ -62,4 +62,12 @@ export function humanReadableContest(name) {
   }
 
   return capitalizeName(name);
-}
+};
+
+export const alternativeContestNames = (name) => {
+  if (name.toLowerCase().startsWith('proposition')) {
+    return ['prop ' + name.match(/proposition ([0-9a-z]+)/i)[1]];
+  }
+
+  return [];
+};
