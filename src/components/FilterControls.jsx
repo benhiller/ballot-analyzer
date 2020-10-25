@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { Typeahead } from 'react-bootstrap-typeahead';
 import classNames from 'classnames';
 import css from 'styled-jsx/css';
 
@@ -10,7 +9,7 @@ import {
   shouldRenderDistrict,
   humanReadableDistrict,
 } from 'src/formatting';
-import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
+// import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
 
 const styles = css`
   .titleContainer {
@@ -249,7 +248,7 @@ const FilterControls = ({
         <div className="filters">
           <div className="filter">
             <span className="typeaheadLabel">People who voted for</span>
-            <Typeahead
+            <div
               id="candidate-filter-typeahead"
               ref={candidateTypeaheadRef}
               className="typeahead"
@@ -260,7 +259,6 @@ const FilterControls = ({
               clearButton
               inputProps={{ spellCheck: false }}
               filterBy={['label', 'contestName', 'alternativeContestNames']}
-              renderMenu={CandidateTypeaheadMenu}
               onBlur={() => {
                 if (selectedCandidateFilter.length === 0) {
                   candidateTypeaheadRef.current &&
@@ -271,7 +269,7 @@ const FilterControls = ({
           </div>
           <div className="filter">
             <span className="typeaheadLabel">and voted via</span>
-            <Typeahead
+            <div
               id="counting-group-filter-typeahead"
               ref={countingGroupTypeaheadRef}
               className="typeahead"
@@ -291,7 +289,7 @@ const FilterControls = ({
           </div>
           <div className="filter">
             <span className="typeaheadLabel">and voted in</span>
-            <Typeahead
+            <div
               id="district-filter-typeahead"
               ref={districtTypeaheadRef}
               className="typeahead"

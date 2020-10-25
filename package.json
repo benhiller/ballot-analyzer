@@ -7,7 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "@next/bundle-analyzer": "^9.5.5",
-    "bootstrap": "^4.5.3",
     "classnames": "^2.2.6",
     "dotenv": "^8.2.0",
     "knex": "^0.21.6",
@@ -15,7 +14,6 @@
     "next": "^9.5.5",
     "pg": "^8.4.1",
     "react": "^16.14.0",
-    "react-bootstrap-typeahead": "^5.1.2",
     "react-dom": "^16.14.0",
     "sqlite3": "^5.0.0",
     "styled-jsx": "^3.3.1",
