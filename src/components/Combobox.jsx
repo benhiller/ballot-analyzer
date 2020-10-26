@@ -4,10 +4,7 @@ import classNames from 'classnames';
 import css from 'styled-jsx/css';
 import deburr from 'lodash.deburr';
 
-// TODO
-// - ui
-// - grouping for candidate typeahead
-// - highlight?
+import GroupedMenu from 'src/components/GroupedMenu';
 
 const styles = css`
   .root {
@@ -75,11 +72,11 @@ const styles = css`
     display: block;
   }
 
-  .menu li {
+  .menu :global(li) {
     padding: 4px 25px;
   }
 
-  .menu li.selectedRow {
+  .menu :global(li.selectedRow) {
     background-color: #007bff;
     color: white;
   }
@@ -101,6 +98,7 @@ const Combobox = ({
   id,
   label,
   options,
+  grouped,
   selected,
   placeholder,
   onChange,
@@ -190,15 +188,24 @@ const Combobox = ({
             {inputItems.length === 0 && (
               <li className="emptyRow">No matches found.</li>
             )}
-            {inputItems.map((item, index) => (
-              <li
-                className={highlightedIndex === index ? 'selectedRow' : null}
-                key={`${item}${index}`}
-                {...getItemProps({ item, index })}
-              >
-                {item.label}
-              </li>
-            ))}
+            {grouped ? (
+              <GroupedMenu
+                items={inputItems}
+                highlightedIndex={highlightedIndex}
+                getItemProps={getItemProps}
+                highlightedClass="selectedRow"
+              />
+            ) : (
+              inputItems.map((item, index) => (
+                <li
+                  className={highlightedIndex === index ? 'selectedRow' : null}
+                  key={item.id}
+                  {...getItemProps({ item, index })}
+                >
+                  {item.label}
+                </li>
+              ))
+            )}
           </>
         )}
       </ul>
