@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import css from 'styled-jsx/css';
 
 import {
@@ -103,6 +103,8 @@ const styles = css`
   }
 `;
 
+const electionFields = ['label', 'contestName', 'alternativeContestNames'];
+
 const FilterControls = ({
   filterPayload,
   selectedElection,
@@ -114,107 +116,145 @@ const FilterControls = ({
   onChangeCountingGroupFilter,
   onChangeDistrictFilter,
 }) => {
-  const candidateOptions = [];
-  let selectedCandidateFilter = null;
-  const countingGroupOptions = [];
-  let selectedCountingGroupOption = null;
-  const districtOptions = [];
-  let selectedDistrictOption = null;
-  let elections = [];
-  if (filterPayload) {
-    elections = filterPayload.elections;
-    const candidates = [...filterPayload.candidates];
-    candidates.sort((c1, c2) => {
-      const contestCmp = c1.contest.id - c2.contest.id;
-      if (contestCmp !== 0) {
-        return contestCmp;
+  const {
+    elections,
+    candidateOptions,
+    selectedCandidateFilter,
+    countingGroupOptions,
+    selectedCountingGroupOption,
+    districtOptions,
+    selectedDistrictOption,
+  } = useMemo(() => {
+    const elections = filterPayload?.elections || [];
+    const candidateOptions = [];
+    let selectedCandidateFilter = null;
+    const countingGroupOptions = [];
+    let selectedCountingGroupOption = null;
+    const districtOptions = [];
+    let selectedDistrictOption = null;
+
+    if (filterPayload) {
+      const candidates = [...filterPayload.candidates];
+      candidates.sort((c1, c2) => {
+        const contestCmp = c1.contest.id - c2.contest.id;
+        if (contestCmp !== 0) {
+          return contestCmp;
+        }
+
+        if (c1.name === 'Write-in' && c2 !== 'Write-in') {
+          return 1;
+        } else if (c1.name !== 'Write-in' && c2 === 'Write-in') {
+          return -1;
+        } else {
+          return c1.name.localeCompare(c2.name);
+        }
+      });
+      for (const candidate of candidates) {
+        if (candidate.electionId !== selectedElection) {
+          continue;
+        }
+
+        const option = {
+          id: candidate.id,
+          label:
+            capitalizeName(candidate.name) +
+            ' (' +
+            humanReadableContest(candidate.contest.name) +
+            ')',
+          menuLabel: capitalizeName(candidate.name),
+          contestName: humanReadableContest(candidate.contest.name),
+          alternativeContestNames: alternativeContestNames(
+            candidate.contest.name,
+          ).join(' '),
+        };
+
+        candidateOptions.push(option);
+        if (option.id === candidateFilter) {
+          selectedCandidateFilter = option;
+        }
       }
 
-      if (c1.name === 'Write-in' && c2 !== 'Write-in') {
-        return 1;
-      } else if (c1.name !== 'Write-in' && c2 === 'Write-in') {
-        return -1;
-      } else {
-        return c1.name.localeCompare(c2.name);
-      }
-    });
-    for (const candidate of candidates) {
-      if (candidate.electionId !== selectedElection) {
-        continue;
+      for (const countingGroup of filterPayload.countingGroups) {
+        if (countingGroup.electionId !== selectedElection) {
+          continue;
+        }
+
+        const option = {
+          id: countingGroup.id,
+          label: countingGroup.name,
+        };
+
+        countingGroupOptions.push(option);
+        if (option.id === countingGroupFilter) {
+          selectedCountingGroupOption = option;
+        }
       }
 
-      const option = {
-        id: candidate.id,
-        label:
-          capitalizeName(candidate.name) +
-          ' (' +
-          humanReadableContest(candidate.contest.name) +
-          ')',
-        menuLabel: capitalizeName(candidate.name),
-        contestName: humanReadableContest(candidate.contest.name),
-        alternativeContestNames: alternativeContestNames(
-          candidate.contest.name,
-        ).join(' '),
-      };
+      for (const district of filterPayload.districts) {
+        if (district.electionId !== selectedElection) {
+          continue;
+        }
 
-      candidateOptions.push(option);
-      if (option.id === candidateFilter) {
-        selectedCandidateFilter = option;
+        if (!shouldRenderDistrict(district)) {
+          continue;
+        }
+
+        const option = {
+          id: district.id,
+          label: humanReadableDistrict(district),
+        };
+
+        districtOptions.push(option);
+        if (option.id === districtFilter) {
+          selectedDistrictOption = option;
+        }
       }
     }
 
-    for (const countingGroup of filterPayload.countingGroups) {
-      if (countingGroup.electionId !== selectedElection) {
-        continue;
-      }
+    return {
+      elections,
+      candidateOptions,
+      selectedCandidateFilter,
+      countingGroupOptions,
+      selectedCountingGroupOption,
+      districtOptions,
+      selectedDistrictOption,
+    };
+  }, [
+    filterPayload,
+    selectedElection,
+    candidateFilter,
+    countingGroupFilter,
+    districtFilter,
+  ]);
 
-      const option = {
-        id: countingGroup.id,
-        label: countingGroup.name,
-      };
+  const handleCandidateFilterChange = useCallback(
+    (candidateFilter) => {
+      onChangeCandidateFilter(candidateFilter?.id);
+    },
+    [onChangeCandidateFilter],
+  );
 
-      countingGroupOptions.push(option);
-      if (option.id === countingGroupFilter) {
-        selectedCountingGroupOption = option;
-      }
-    }
+  const handleCountingGroupFilterChange = useCallback(
+    (countingGroupFilter) => {
+      onChangeCountingGroupFilter(countingGroupFilter?.id);
+    },
+    [onChangeCountingGroupFilter],
+  );
 
-    for (const district of filterPayload.districts) {
-      if (district.electionId !== selectedElection) {
-        continue;
-      }
+  const handleDistrictFilterChange = useCallback(
+    (districtFilter) => {
+      onChangeDistrictFilter(districtFilter?.id);
+    },
+    [onChangeDistrictFilter],
+  );
 
-      if (!shouldRenderDistrict(district)) {
-        continue;
-      }
-
-      const option = {
-        id: district.id,
-        label: humanReadableDistrict(district),
-      };
-
-      districtOptions.push(option);
-      if (option.id === districtFilter) {
-        selectedDistrictOption = option;
-      }
-    }
-  }
-
-  const handleCandidateFilterChange = (candidateFilter) => {
-    onChangeCandidateFilter(candidateFilter?.id);
-  };
-
-  const handleCountingGroupFilterChange = (countingGroupFilter) => {
-    onChangeCountingGroupFilter(countingGroupFilter?.id);
-  };
-
-  const handleDistrictFilterChange = (districtFilter) => {
-    onChangeDistrictFilter(districtFilter?.id);
-  };
-
-  const handleElectionChange = (e) => {
-    onChangeElection(e.target.value);
-  };
+  const handleElectionChange = useCallback(
+    (e) => {
+      onChangeElection(e.target.value);
+    },
+    [onChangeElection],
+  );
 
   useEffect(() => {
     if (
@@ -277,7 +317,7 @@ const FilterControls = ({
               options={candidateOptions}
               selected={selectedCandidateFilter}
               onChange={handleCandidateFilterChange}
-              filterBy={['label', 'contestName', 'alternativeContestNames']}
+              filterBy={electionFields}
             />
           </div>
           <div className="filter">
