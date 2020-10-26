@@ -103,7 +103,7 @@ const styles = css`
   }
 `;
 
-const electionFields = ['label', 'contestName', 'alternativeContestNames'];
+const electionFields = ['label', 'groupBy', 'alternativeContestNames'];
 
 const FilterControls = ({
   filterPayload,
@@ -162,7 +162,7 @@ const FilterControls = ({
             humanReadableContest(candidate.contest.name) +
             ')',
           menuLabel: capitalizeName(candidate.name),
-          contestName: humanReadableContest(candidate.contest.name),
+          groupBy: humanReadableContest(candidate.contest.name),
           alternativeContestNames: alternativeContestNames(
             candidate.contest.name,
           ).join(' '),
@@ -315,6 +315,7 @@ const FilterControls = ({
               label="People who voted for"
               placeholder="anyone"
               options={candidateOptions}
+              grouped
               selected={selectedCandidateFilter}
               onChange={handleCandidateFilterChange}
               filterBy={electionFields}
