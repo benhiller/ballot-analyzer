@@ -6,6 +6,7 @@ import Tooltip from 'react-tooltip-lite';
 import { capitalizeName, humanReadableContest } from 'src/formatting';
 import { computeTotalVotes } from 'src/utils';
 import CandidatePercent from 'src/components/CandidatePercent';
+import CandidateBar from 'src/components/CandidateBar';
 
 const styles = css`
   .contestContainer {
@@ -62,21 +63,6 @@ const styles = css`
   .pctBarCol {
     width: 25%;
     padding-left: 5px;
-  }
-  .barWrapper {
-    height: 22px;
-    position: relative;
-  }
-  .fullBar {
-    width: 100%;
-    height: 22px;
-    background-color: #f2f2f2;
-  }
-  .pctBar {
-    position: relative;
-    top: -22px;
-    height: 22px;
-    background-color: #71828e;
   }
 
   :global(.unknownTooltipTarget) {
@@ -200,20 +186,12 @@ const Contest = ({
                     {candidate.id === 'unknown' ? (
                       <div />
                     ) : (
-                      <div className="barWrapper">
-                        <div className="fullBar" />
-                        <div
-                          style={{
-                            width: `${(
-                              (candidate.votes / totalVotes) *
-                              100
-                            ).toFixed(1)}%`,
-                          }}
-                          className="pctBar"
-                        >
-                          {' '}
-                        </div>
-                      </div>
+                      <CandidateBar
+                        candidate={candidate}
+                        contest={contest}
+                        hasFiltersApplied={hasFiltersApplied}
+                        totalVotes={totalVotes}
+                      />
                     )}
                   </td>
                 </>
