@@ -37,35 +37,68 @@ const styles = css`
     color: #555;
     cursor: pointer;
   }
-  .resultsTable {
-    table-layout: fixed;
-    width: 100%;
-    white-space: nowrap;
-    border-spacing: 0 5px;
-    border-collapse: separate;
-  }
   .unknownCandidate {
     font-style: italic;
   }
+
+  .tableRow {
+    margin-bottom: 8px;
+  }
+  .smallerRow {
+    display: flex;
+    justify-content: space-between;
+  }
   .candidateCol {
-    width: 35%;
+    width: 75%;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
   .votesCol {
-    width: 15%;
     overflow: hidden;
+    text-overflow: ellipsis;
     text-align: right;
     color: #888;
   }
   .pctCol {
-    width: 25%;
     overflow: hidden;
+    text-overflow: ellipsis;
     text-align: right;
   }
   .pctBarCol {
-    width: 25%;
     padding-left: 5px;
+    width: 50%;
+  }
+  @media (min-width: 1024px) {
+    .resultsTable {
+      table-layout: fixed;
+      display: table;
+      width: 100%;
+      white-space: nowrap;
+      border-spacing: 0 5px;
+      border-collapse: separate;
+    }
+    .col {
+      display: table-cell;
+    }
+    .candidateCol {
+      width: 35%;
+    }
+    .votesCol {
+      width: 15%;
+    }
+    .pctCol {
+      width: 25%;
+    }
+    .pctBarCol {
+      width: 25%;
+    }
+    .tableRow {
+      display: table-row;
+    }
+    .smallerRow {
+      display: contents;
+    }
   }
 
   :global(.unknownTooltipTarget) {
@@ -150,16 +183,16 @@ const Contest = ({
           )}
         </div>
       </div>
-      <table className="resultsTable">
-        <tbody>
-          {visibleCandidates.map((candidate) => (
-            <tr
-              key={candidate.id}
-              className={classNames({
-                unknownCandidate: candidate.id === 'unknown',
-              })}
-            >
-              <td className="candidateCol">
+      <div className="resultsTable">
+        {visibleCandidates.map((candidate) => (
+          <div
+            key={candidate.id}
+            className={classNames('tableRow', {
+              unknownCandidate: candidate.id === 'unknown',
+            })}
+          >
+            <span className="smallerRow">
+              <div className="col candidateCol">
                 {capitalizeName(candidate.name)}{' '}
                 {candidate.id === 'unknown' && (
                   <Tooltip
@@ -172,37 +205,39 @@ const Contest = ({
                     ?
                   </Tooltip>
                 )}
-              </td>
-              <td className="votesCol">{candidate.votes.toLocaleString()}</td>
-              {!containsCandidateFilter && (
-                <>
-                  <td className="pctCol">
-                    <CandidatePercent
+              </div>
+              <div className="col votesCol">
+                {candidate.votes.toLocaleString()}
+              </div>
+            </span>
+            {!containsCandidateFilter && (
+              <span className="smallerRow">
+                <div className="col pctCol">
+                  <CandidatePercent
+                    candidate={candidate}
+                    totalVotes={totalVotes}
+                    unfilteredTotalVotes={contest.unfilteredTotalVotes}
+                    maxPercentChange={maxPercentChange}
+                    hasFiltersApplied={hasFiltersApplied}
+                  />
+                </div>
+                <div className="col pctBarCol">
+                  {candidate.id === 'unknown' ? (
+                    <div />
+                  ) : (
+                    <CandidateBar
                       candidate={candidate}
-                      totalVotes={totalVotes}
-                      unfilteredTotalVotes={contest.unfilteredTotalVotes}
-                      maxPercentChange={maxPercentChange}
+                      contest={contest}
                       hasFiltersApplied={hasFiltersApplied}
+                      totalVotes={totalVotes}
                     />
-                  </td>
-                  <td className="pctBarCol">
-                    {candidate.id === 'unknown' ? (
-                      <div />
-                    ) : (
-                      <CandidateBar
-                        candidate={candidate}
-                        contest={contest}
-                        hasFiltersApplied={hasFiltersApplied}
-                        totalVotes={totalVotes}
-                      />
-                    )}
-                  </td>
-                </>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  )}
+                </div>
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

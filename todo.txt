@@ -7,8 +7,6 @@ functionality:
 ui:
 - Allow clicking on a candidate row to apply them as a filter?
 - Separate races by type? Group presidential primaries, house, state leg, props, etc?
-* test on iphone
-  - try to break up rows into two rows on iphone?
 - use 'tnum'?
 
 data:

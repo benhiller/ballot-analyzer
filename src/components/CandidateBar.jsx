@@ -6,6 +6,8 @@ const styles = css`
   .barWrapper {
     height: 22px;
     position: relative;
+    margin-top: -25px;
+    top: 28px;
   }
   .fullBar {
     width: 100%;
