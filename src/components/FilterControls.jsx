@@ -36,7 +36,7 @@ const styles = css`
   .title {
     line-height: 1.1;
     font-size: 24px;
-    font-weight: 200;
+    font-weight: 300;
     display: inline;
     margin-top: 4px;
     margin-bottom: 10px;
@@ -45,6 +45,7 @@ const styles = css`
     .title {
       margin-bottom: 0;
       font-size: 28px;
+      font-weight: 200;
     }
   }
 
