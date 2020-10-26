@@ -1,3 +1,6 @@
+bugs:
+- select item in combobox, clear text, then click on another item to select, it doesn't get selected
+
 functionality:
 - allow filtering by votes across multiple races (or single race for races with numVotes > 1)
 - choose multiple candidates in 1 race and compare how their voters voted in other races
