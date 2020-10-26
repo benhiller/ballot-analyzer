@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
 import css from 'styled-jsx/css';
+import Tooltip from 'react-tooltip-lite';
 
 import { capitalizeName, humanReadableContest } from 'src/formatting';
 import { computeTotalVotes } from 'src/utils';
@@ -77,6 +78,28 @@ const styles = css`
     height: 22px;
     background-color: #71828e;
   }
+
+  :global(.unknownTooltipTarget) {
+    display: inline-block;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+    color: white;
+    background-color: #333;
+    border-radius: 15px;
+    height: 15px;
+    width: 15px;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  :global(.unknownTooltip .react-tooltip-lite) {
+    border-radius: 4px;
+    background-color: #333;
+    color: white;
+    font-size: 14px;
+    width: 250px !important;
+  }
 `;
 
 const Contest = ({
@@ -147,7 +170,20 @@ const Contest = ({
                 unknownCandidate: candidate.id === 'unknown',
               })}
             >
-              <td className="candidateCol">{capitalizeName(candidate.name)}</td>
+              <td className="candidateCol">
+                {capitalizeName(candidate.name)}{' '}
+                {candidate.id === 'unknown' && (
+                  <Tooltip
+                    className="unknownTooltipTarget"
+                    tipContentClassName="unknownTooltip"
+                    content="When filtering by candidate, some votes may be unknown due to their contest being on a separate ballot page from the contest containing the filtered candidate. Votes may also be unknown if the voter not in a district eligible to vote on this contest, or if the voter decided not to vote in this contest."
+                    direction="down"
+                    arrowSize={5}
+                  >
+                    ?
+                  </Tooltip>
+                )}
+              </td>
               <td className="votesCol">{candidate.votes.toLocaleString()}</td>
               {!containsCandidateFilter && (
                 <>
