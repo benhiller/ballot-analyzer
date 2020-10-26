@@ -2,15 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useCombobox } from 'downshift';
 import classNames from 'classnames';
 import css from 'styled-jsx/css';
+import deburr from 'lodash.deburr';
 
 // TODO
 // - ui
 // - grouping for candidate typeahead
 // - highlight?
-// - filtering:
-// - deburr
-// - search substr rather than startsWith
-// - search multiple fields
 
 const styles = css`
   .root {
@@ -92,6 +89,14 @@ const styles = css`
   }
 `;
 
+const isMatch = (item, filterBy, query) => {
+  const fields = filterBy || ['label'];
+  const processString = (str) => deburr(str.toLowerCase());
+  return fields.some(
+    (field) => processString(item[field]).indexOf(processString(query)) !== -1,
+  );
+};
+
 const Combobox = ({
   id,
   label,
@@ -124,9 +129,7 @@ const Combobox = ({
     },
     onInputValueChange: ({ inputValue }) => {
       setInputItems(
-        options.filter((item) =>
-          item.label.toLowerCase().startsWith(inputValue.toLowerCase()),
-        ),
+        options.filter((item) => isMatch(item, filterBy, inputValue)),
       );
     },
     onSelectedItemChange: ({ selectedItem }) => {
@@ -139,11 +142,9 @@ const Combobox = ({
   // Update inputItems when options changes
   useEffect(() => {
     setInputItems(
-      options.filter((item) =>
-        item.label.toLowerCase().startsWith(inputValue.toLowerCase()),
-      ),
+      options.filter((item) => isMatch(item, filterBy, inputValue)),
     );
-  }, [options, inputValue]);
+  }, [options, filterBy, inputValue]);
 
   useEffect(() => {
     if (isOpen && inputItems.length === 1) {
