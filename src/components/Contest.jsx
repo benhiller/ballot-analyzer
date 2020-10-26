@@ -26,6 +26,9 @@ const styles = css`
   .name {
     font-weight: 600;
   }
+  .paginationToggle {
+    text-align: right;
+  }
   div.paginationToggle a {
     color: #888;
     font-size: 14px;
