@@ -35,7 +35,7 @@ const styles = css`
 
   .title {
     line-height: 1.1;
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 200;
     display: inline;
     margin-top: 4px;
@@ -44,9 +44,14 @@ const styles = css`
   @media (min-width: 1024px) {
     .title {
       margin-bottom: 0;
+      font-size: 28px;
     }
   }
 
+  .dropdownContainer {
+    width: 100%;
+    position: relative;
+  }
   .electionDropdown {
     width: 100%;
     height: 38px;
@@ -62,10 +67,9 @@ const styles = css`
     .electionDropdown {
       width: auto;
     }
-  }
-
-  .dropdownContainer {
-    position: relative;
+    .dropdownContainer {
+      width: auto;
+    }
   }
 
   .dropdownChevron {
