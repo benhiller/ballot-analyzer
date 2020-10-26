@@ -71,8 +71,11 @@ const styles = css`
   .footer {
     background-color: #f2f2f2;
     margin: 20px -20px -20px;
-    padding: 50px 50px 40px;
+    padding: 50px 10px 40px;
     text-align: center;
+  }
+  .footer p {
+    margin-bottom: 10px;
   }
   .footer a {
     color: #007bff;
