@@ -9,17 +9,35 @@ import GroupedMenu from 'src/components/GroupedMenu';
 const styles = css`
   .root {
     position: relative;
+    margin-bottom: 10px;
+    width: 100%;
+  }
+  @media (min-width: 1024px) {
+    .root {
+      width: inherit;
+    }
   }
 
   label {
+    display: block;
     font-size: 16px;
     margin-right: 5px;
+  }
+  @media (min-width: 1024px) {
+    label {
+      display: inline;
+    }
   }
 
   .input {
     position: relative;
     display: inline-block;
-    width: 300px;
+    width: 100%;
+  }
+  @media (min-width: 1024px) {
+    .input {
+      width: 300px;
+    }
   }
 
   .input input {
@@ -59,13 +77,19 @@ const styles = css`
     position: absolute;
     max-height: 300px;
     overflow: scroll;
-    right: -150px;
+    left: 0;
     background-color: white;
     z-index: 100;
-    width: 450px;
+    width: 100%;
     border: 1px solid #ced4da;
     border-radius: 4px;
     padding: 8px 0;
+    margin-top: 2px;
+  }
+  @media (min-width: 1024px) {
+    .menu {
+      width: 450px;
+    }
   }
 
   .openMenu {
@@ -150,6 +174,8 @@ const Combobox = ({
     }
   }, [inputItems, isOpen, setHighlightedIndex]);
 
+  const { onBlur, onClick, ...inputProps } = getInputProps();
+
   return (
     <div className="root">
       <style jsx>{styles}</style>
@@ -159,15 +185,19 @@ const Combobox = ({
         {...getComboboxProps()}
       >
         <input
-          {...getInputProps()}
           placeholder={placeholder}
           spellCheck={false}
-          onClick={openMenu}
-          onBlur={() => {
+          onClick={(e) => {
+            openMenu();
+            onClick && onClick(e);
+          }}
+          onBlur={(e) => {
             if (selectedItem && inputValue !== selectedItem.label) {
               selectItem(null);
             }
+            onBlur && onBlur(e);
           }}
+          {...inputProps}
         />
         {selectedItem && (
           <button
@@ -178,37 +208,39 @@ const Combobox = ({
             <span>{'\u00d7'}</span>
           </button>
         )}
+        <ul
+          {...getMenuProps()}
+          className={classNames('menu', { openMenu: isOpen })}
+        >
+          {isOpen && (
+            <>
+              {inputItems.length === 0 && (
+                <li className="emptyRow">No matches found.</li>
+              )}
+              {grouped ? (
+                <GroupedMenu
+                  items={inputItems}
+                  highlightedIndex={highlightedIndex}
+                  getItemProps={getItemProps}
+                  highlightedClass="selectedRow"
+                />
+              ) : (
+                inputItems.map((item, index) => (
+                  <li
+                    className={
+                      highlightedIndex === index ? 'selectedRow' : null
+                    }
+                    key={item.id}
+                    {...getItemProps({ item, index })}
+                  >
+                    {item.label}
+                  </li>
+                ))
+              )}
+            </>
+          )}
+        </ul>
       </div>
-      <ul
-        {...getMenuProps()}
-        className={classNames('menu', { openMenu: isOpen })}
-      >
-        {isOpen && (
-          <>
-            {inputItems.length === 0 && (
-              <li className="emptyRow">No matches found.</li>
-            )}
-            {grouped ? (
-              <GroupedMenu
-                items={inputItems}
-                highlightedIndex={highlightedIndex}
-                getItemProps={getItemProps}
-                highlightedClass="selectedRow"
-              />
-            ) : (
-              inputItems.map((item, index) => (
-                <li
-                  className={highlightedIndex === index ? 'selectedRow' : null}
-                  key={item.id}
-                  {...getItemProps({ item, index })}
-                >
-                  {item.label}
-                </li>
-              ))
-            )}
-          </>
-        )}
-      </ul>
     </div>
   );
 };
