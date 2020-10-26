@@ -6,12 +6,11 @@ import css from 'styled-jsx/css';
 // TODO
 // - ui
 // - grouping for candidate typeahead
-// - pagination?
-// - blank state
 // - highlight?
 // - filtering:
 // - deburr
 // - search substr rather than startsWith
+// - search multiple fields
 
 const styles = css`
   .root {
@@ -19,6 +18,7 @@ const styles = css`
   }
 
   label {
+    font-size: 16px;
     margin-right: 5px;
   }
 
@@ -63,6 +63,8 @@ const styles = css`
   .menu {
     display: none;
     position: absolute;
+    max-height: 300px;
+    overflow: scroll;
     right: -150px;
     background-color: white;
     z-index: 100;
@@ -84,9 +86,21 @@ const styles = css`
     background-color: #007bff;
     color: white;
   }
+
+  .emptyRow {
+    color: #888;
+  }
 `;
 
-const Combobox = ({ id, label, options, selected, placeholder, onChange }) => {
+const Combobox = ({
+  id,
+  label,
+  options,
+  selected,
+  placeholder,
+  onChange,
+  filterBy,
+}) => {
   const [inputItems, setInputItems] = useState(options);
   const {
     isOpen,
@@ -170,16 +184,22 @@ const Combobox = ({ id, label, options, selected, placeholder, onChange }) => {
         {...getMenuProps()}
         className={classNames('menu', { openMenu: isOpen })}
       >
-        {isOpen &&
-          inputItems.map((item, index) => (
-            <li
-              className={highlightedIndex === index ? 'selectedRow' : null}
-              key={`${item}${index}`}
-              {...getItemProps({ item, index })}
-            >
-              {item.label}
-            </li>
-          ))}
+        {isOpen && (
+          <>
+            {inputItems.length === 0 && (
+              <li className="emptyRow">No matches found.</li>
+            )}
+            {inputItems.map((item, index) => (
+              <li
+                className={highlightedIndex === index ? 'selectedRow' : null}
+                key={`${item}${index}`}
+                {...getItemProps({ item, index })}
+              >
+                {item.label}
+              </li>
+            ))}
+          </>
+        )}
       </ul>
     </div>
   );
