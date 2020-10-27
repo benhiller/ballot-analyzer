@@ -82,20 +82,16 @@ const styles = css`
     margin-right: 12px;
   }
 
-  .filtersContainer {
-    display: flex;
-    justify-content: center;
-  }
-
   .filters {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    justify-content: center;
     width: 100%;
   }
   @media (min-width: 1024px) {
     .filters {
       width: inherit;
+      flex-direction: row;
     }
   }
 
@@ -105,14 +101,15 @@ const styles = css`
   }
   @media (min-width: 1024px) {
     .filterHeader {
-      text-align: center;
+      text-align: right;
+      width: inherit;
     }
   }
 `;
 
 const electionFields = ['label', 'groupBy', 'alternativeContestNames'];
 
-const FilterControls = ({
+const Header = ({
   filterPayload,
   selectedElection,
   candidateFilter,
@@ -308,44 +305,42 @@ const FilterControls = ({
           />
         </div>
       </div>
-      <div className="filtersContainer">
-        <div className="filters">
-          <div className="filterHeader">
-            <b>Filter results to:</b>
-          </div>
-          <Combobox
-            id="candidate-filter-typeahead"
-            className="typeahead"
-            label="People who voted for"
-            placeholder="anyone"
-            options={candidateOptions}
-            grouped
-            selected={selectedCandidateFilter}
-            onChange={handleCandidateFilterChange}
-            filterBy={electionFields}
-          />
-          <Combobox
-            id="counting-group-filter-typeahead"
-            className="typeahead"
-            label="and voted via"
-            placeholder="any method"
-            options={countingGroupOptions}
-            selected={selectedCountingGroupOption}
-            onChange={handleCountingGroupFilterChange}
-          />
-          <Combobox
-            id="district-filter-typeahead"
-            className="typeahead"
-            label="and voted in"
-            placeholder="anywhere"
-            options={districtOptions}
-            selected={selectedDistrictOption}
-            onChange={handleDistrictFilterChange}
-          />
+      <div className="filters">
+        <div className="filterHeader">
+          <b>Filter results to:</b>
         </div>
+        <Combobox
+          id="candidate-filter-typeahead"
+          className="typeahead"
+          label="People who voted for"
+          placeholder="anyone"
+          options={candidateOptions}
+          grouped
+          selected={selectedCandidateFilter}
+          onChange={handleCandidateFilterChange}
+          filterBy={electionFields}
+        />
+        <Combobox
+          id="counting-group-filter-typeahead"
+          className="typeahead"
+          label="and voted via"
+          placeholder="any method"
+          options={countingGroupOptions}
+          selected={selectedCountingGroupOption}
+          onChange={handleCountingGroupFilterChange}
+        />
+        <Combobox
+          id="district-filter-typeahead"
+          className="typeahead"
+          label="and voted in"
+          placeholder="anywhere"
+          options={districtOptions}
+          selected={selectedDistrictOption}
+          onChange={handleDistrictFilterChange}
+        />
       </div>
     </>
   );
 };
 
-export default FilterControls;
+export default Header;

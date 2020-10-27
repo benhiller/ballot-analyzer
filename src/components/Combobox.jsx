@@ -15,6 +15,8 @@ const styles = css`
   @media (min-width: 1024px) {
     .root {
       width: inherit;
+      margin-left: 10px;
+      flex: 0;
     }
   }
 
@@ -25,7 +27,8 @@ const styles = css`
   }
   @media (min-width: 1024px) {
     label {
-      display: inline;
+      display: inline-block;
+      padding-bottom: 2px;
     }
   }
 
@@ -36,7 +39,7 @@ const styles = css`
   }
   @media (min-width: 1024px) {
     .input {
-      width: 300px;
+      width: 275px;
     }
   }
 

@@ -10,7 +10,7 @@ import {
   queryHasFiltersApplied,
 } from 'src/parameters';
 import { computeTotalVotes } from 'src/utils';
-import FilterControls from 'src/components/FilterControls';
+import Header from 'src/components/Header';
 import Contest from 'src/components/Contest';
 import Spinner from 'src/components/Spinner';
 
@@ -320,7 +320,7 @@ function HomePage({
         <title>SF Ballot Analyzer</title>
       </Head>
       <style jsx>{styles}</style>
-      <FilterControls
+      <Header
         filterPayload={filterPayload}
         selectedElection={selectedElection}
         candidateFilter={candidateFilter}
