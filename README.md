@@ -7,3 +7,5 @@ However, there is a major limitation to this, which is that I don't think it is 
 You can obtain the cast vote records for SF elections [here](https://sfelections.sfgov.org/results). They are only available for elections post-Nov. 2019, probably because SF switched to new voting machines in that election.
 
 This repo also contains a script to import the cast vote records into a DB, and a script to generate a district precinct portion manifest for CVRs from one election from another election, since for some reason that file was not available in the Nov 2019 CVR election results from SF, but it was for the Mar 2020 CVR election results, and the precincts fortunately hadn't changed between those two elections.
+
+This app is currently viewable at https://ballot-analyzer.vercel.app/.
