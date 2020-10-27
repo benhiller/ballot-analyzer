@@ -38,7 +38,6 @@ const styles = css`
     font-size: 24px;
     font-weight: 300;
     display: inline;
-    margin-top: 4px;
     margin-bottom: 10px;
   }
   @media (min-width: 1024px) {

@@ -62,10 +62,8 @@ const styles = css`
     font-size: 24px;
     font-weight: 700;
     right: 0;
-    margin-top: 0px;
     color: #000;
     opacity: 0.5;
-    line-height: 1.4;
   }
 
   .clear:hover {

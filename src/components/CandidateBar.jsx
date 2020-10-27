@@ -6,9 +6,15 @@ const styles = css`
   .barWrapper {
     height: 22px;
     position: relative;
-    margin-top: -25px;
-    top: 28px;
+    margin-top: 2px;
   }
+  @media (min-width: 1024px) {
+    .barWrapper {
+      margin-top: -25px;
+      top: 28px;
+    }
+  }
+
   .fullBar {
     width: 100%;
     height: 22px;

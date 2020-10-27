@@ -59,6 +59,7 @@ const styles = css`
     text-overflow: ellipsis;
     text-align: right;
     color: #888;
+    padding-right: 2px;
   }
   .pctCol {
     overflow: hidden;
@@ -107,10 +108,11 @@ const styles = css`
     font-weight: bold;
     font-size: 14px;
     color: white;
-    background-color: #333;
+    background-color: #aaa;
     border-radius: 15px;
     height: 15px;
     width: 15px;
+    margin-left: 3px;
     text-align: center;
     line-height: 1.1;
   }
