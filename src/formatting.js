@@ -2,6 +2,10 @@ export const capitalizeName = (name) => {
   return name
     .split(' ')
     .map((token) => {
+      if (token === 'BART') {
+        return token;
+      }
+
       let capitalizedToken = '';
       let foundAlpha = false;
       for (const char of token.split('')) {
@@ -75,6 +79,8 @@ export const alternativeContestNames = (name) => {
 export const shouldRenderDistrict = ({ type }) => {
   return (
     type !== 'Countywide' &&
+    type !== 'County Wide' &&
+    type !== 'CITY OF S.F.' &&
     type !== 'STATE' &&
     type !== 'State Senator' &&
     type !== 'Board of Equalization (State)' &&
@@ -101,6 +107,10 @@ export const humanReadableDistrict = ({ name, type }) => {
     case 'County Supervisor': {
       const district = name.split(' ')[2];
       return `${ordinal(parseInt(district))} Supervisorial District`;
+    }
+    case 'BART': {
+      const district = name.split(' ')[2];
+      return `${ordinal(parseInt(district))} BART District`;
     }
     case 'Neighborhood':
       switch (name) {
