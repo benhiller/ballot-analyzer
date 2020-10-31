@@ -313,11 +313,11 @@ function HomePage({
           name="description"
           content="View San Francisco election results and filter them by various dimensions."
         />
-        <meta property="og:title" content="SF Ballot Analyzer" />
+        <meta property="og:title" content="SF Ballot Analytics" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://ballot-analyzer.vercel.app/" />
+        <meta property="og:url" content="https://sf.ballotanaltics.app/" />
         <meta property="og:image" content="/og.png" />
-        <title>SF Ballot Analyzer</title>
+        <title>SF Ballot Analytics</title>
       </Head>
       <style jsx>{styles}</style>
       <Header

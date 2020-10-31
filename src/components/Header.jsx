@@ -285,7 +285,7 @@ const Header = ({
     <>
       <style jsx>{styles}</style>
       <div className="titleContainer">
-        <h1 className="title">San Francisco Ballot Analyzer</h1>
+        <h1 className="title">San Francisco Ballot Analytics</h1>
         <div className="dropdownContainer">
           <select
             className="electionDropdown"
