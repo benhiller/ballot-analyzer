@@ -5,6 +5,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import { getFilterPayload, getContestResults } from 'src/data';
+import db from 'src/db/';
 import {
   getUniversalQueryParams,
   queryHasFiltersApplied,
@@ -17,6 +18,7 @@ import Spinner from 'src/components/Spinner';
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 export const getServerSideProps = async ({ query }) => {
+  await db.connect();
   const initialUnfilteredContestResults = await getContestResults(
     getUniversalQueryParams(query),
   );
@@ -24,6 +26,7 @@ export const getServerSideProps = async ({ query }) => {
     ? await getContestResults(query)
     : null;
   const initialFilterPayload = await getFilterPayload();
+  await db.clean();
   return {
     props: {
       initialFilterPayload,
