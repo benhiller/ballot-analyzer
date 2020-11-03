@@ -20,6 +20,8 @@
     "knex": "^0.21.6",
     "knex-on-conflict-do-nothing": "^1.0.0",
     "lodash.deburr": "^4.1.0",
+    "memcached": "^2.2.2",
+    "memcached-promisify": "^2.0.0",
     "next": "^9.5.5",
     "pg": "^8.4.1",
     "react": "^16.14.0",
