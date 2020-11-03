@@ -11,7 +11,7 @@ const cacheGetScb = async (key, cb) => {
 
   const result = await cb();
   if (cache) {
-    await cache.set(key, JSON.stringify(result), { expires: 86400 });
+    await cache.set(key, JSON.stringify(result), {});
   }
   return result;
 };
