@@ -4,14 +4,14 @@ import cache from 'src/cache';
 const cacheGetScb = async (key, cb) => {
   if (cache) {
     const cachedValue = await cache.get(key);
-    if (cachedValue) {
-      return cachedValue;
+    if (cachedValue.value) {
+      return JSON.parse(cachedValue.value.toString());
     }
   }
 
   const result = await cb();
   if (cache) {
-    await cache.set(key, result, 86400);
+    await cache.set(key, JSON.stringify(result), { expires: 86400 });
   }
   return result;
 };

@@ -1,8 +1,8 @@
-import Memcached from 'memcached-promisify';
+import memjs from 'memjs';
 
 let cache;
 if (process.env.MC_CONNECTION_STRING) {
-  cache = new Memcached(process.env.MC_CONNECTION_STRING);
+  cache = memjs.Client.create(process.env.MC_CONNECTION_STRING);
 } else {
   cache = null;
 }
