@@ -143,43 +143,64 @@ export async function getContestResults(query) {
     );
   };
 
-  if (query.candidate) {
-    votesQuery = applyCandidateFilter(votesQuery, query.candidate);
-  }
+  const applyCountingGroupFilter = (query, countingGroupId) => {
+    return query.where({ counting_group_id: countingGroupId });
+  };
 
-  if (query.countingGroup) {
-    votesQuery = votesQuery.where({ counting_group_id: query.countingGroup });
-  }
-
-  if (query.district) {
-    votesQuery = votesQuery.whereExists(
+  const applyDistrictFilter = (query, districtId) => {
+    return query.whereExists(
       knex
         .select('id')
         .from('precinct_portion_district_assoc')
         .whereRaw(
           'vote.precinct_portion_id = precinct_portion_district_assoc.precinct_portion_id AND precinct_portion_district_assoc.district_id = ?',
-          [query.district],
+          districtId,
         ),
     );
+  };
+
+  let keySuffix = `-e${electionId}`;
+  if (query.candidate) {
+    keySuffix = `${keySuffix}-c${query.candidate}`;
+    votesQuery = applyCandidateFilter(votesQuery, query.candidate);
+  }
+
+  if (query.countingGroup) {
+    keySuffix = `${keySuffix}-g${query.countingGroup}`;
+    votesQuery = applyCountingGroupFilter(votesQuery, query.countingGroup);
+  }
+
+  if (query.district) {
+    keySuffix = `${keySuffix}-d${query.district}`;
+    votesQuery = applyDistrictFilter(votesQuery, query.district);
   }
 
   let contestsToVotes = {};
   if (query.candidate) {
     const distinctVotes = await cacheGetScb(
-      `distinct-votes-${query.candidate}`,
+      `distinct-votes-${keySuffix}`,
       async () => {
-        return await knex
+        let distinctQuery = applyCandidateFilter(
+          knex('vote')
+            .distinct(['tabulator_id', 'batch_id', 'record_id'])
+            .select('contest_id')
+            .where('election_id', electionId),
+          query.candidate,
+        );
+        if (query.countingGroup) {
+          distinctQuery = applyCountingGroupFilter(
+            distinctQuery,
+            query.countingGroup,
+          );
+        }
+        if (query.district) {
+          distinctQuery = applyDistrictFilter(distinctQuery, query.district);
+        }
+
+        return knex
           .count()
           .select('contest_id')
-          .from(
-            applyCandidateFilter(
-              knex('vote')
-                .distinct(['tabulator_id', 'batch_id', 'record_id'])
-                .select('contest_id')
-                .where('election_id', electionId),
-              query.candidate,
-            ).as('distinct_votes'),
-          )
+          .from(distinctQuery.as('distinct_votes'))
           .groupBy('contest_id');
       },
     );
@@ -191,20 +212,12 @@ export async function getContestResults(query) {
     );
   }
 
-  let key = `votes-by-candidate-e${electionId}`;
-  if (query.candidate) {
-    key = `${key}-c${query.candidate}`;
-  }
-  if (query.countingGroup) {
-    key = `${key}-g${query.countingGroup}`;
-  }
-  if (query.district) {
-    key = `${key}-d${query.district}`;
-  }
-
-  const votesByCandidate = await cacheGetScb(key, async () => {
-    return votesQuery;
-  });
+  const votesByCandidate = await cacheGetScb(
+    `votes-by-candidate-${keySuffix}`,
+    async () => {
+      return votesQuery;
+    },
+  );
   const candidateToVotes = Object.fromEntries(
     votesByCandidate.map((row) => [
       row.candidate_id.toString(),
