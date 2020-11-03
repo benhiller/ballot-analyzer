@@ -124,8 +124,23 @@ const augmentResultsWithPercentChanges = (
   return filteredContestResults;
 };
 
-const groupContests = (contestResults) => {
-  return contestResults.reduce((arr, contest) => {
+const sortAndGroupContests = (contestResults, candidateFilter) => {
+  const contests = [...contestResults];
+  if (candidateFilter) {
+    const contestIdxToHoist = contests.findIndex(
+      (contest) =>
+        contest.candidates.findIndex((cand) => cand.id === candidateFilter) !==
+        -1,
+    );
+
+    if (contestIdxToHoist !== -1) {
+      const contest = contests[contestIdxToHoist];
+      contests.splice(contestIdxToHoist, 1);
+      contests.splice(0, 0, contest);
+    }
+  }
+
+  return contests.reduce((arr, contest) => {
     if (arr.length === 0) {
       arr.push([contest]);
     } else if (arr[arr.length - 1].length === 2) {
@@ -188,11 +203,12 @@ function HomePage({
   let totalVotesForFilteredCandidate = 0;
   if (hasFiltersApplied && filteredContestResults && unfilteredContestResults) {
     loading = false;
-    groupedContests = groupContests(
+    groupedContests = sortAndGroupContests(
       augmentResultsWithPercentChanges(
         filteredContestResults,
         unfilteredContestResults,
       ),
+      candidateFilter,
     );
 
     totalVotesForFilteredCandidate = candidateFilter
@@ -204,7 +220,7 @@ function HomePage({
       : 0;
   } else if (!hasFiltersApplied && unfilteredContestResults) {
     loading = false;
-    groupedContests = groupContests(unfilteredContestResults, null);
+    groupedContests = sortAndGroupContests(unfilteredContestResults, null);
   }
 
   const updateUrl = (
