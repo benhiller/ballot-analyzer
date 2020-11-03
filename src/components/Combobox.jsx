@@ -135,6 +135,7 @@ const Combobox = ({
     getLabelProps,
     getMenuProps,
     getInputProps,
+    getItemProps,
     getComboboxProps,
     highlightedIndex,
     selectedItem,
@@ -143,7 +144,6 @@ const Combobox = ({
     openMenu,
     closeMenu,
     selectItem,
-    getItemProps,
   } = useCombobox({
     id,
     items: inputItems,
@@ -152,7 +152,7 @@ const Combobox = ({
     },
     onInputValueChange: ({ inputValue }) => {
       setInputItems(
-        options.filter((item) => isMatch(item, filterBy, inputValue)),
+        inputItems.filter((item) => isMatch(item, filterBy, inputValue)),
       );
     },
     onSelectedItemChange: ({ selectedItem }) => {
@@ -160,6 +160,18 @@ const Combobox = ({
       onChange(selectedItem);
     },
     selectedItem: selected || null,
+    onStateChange: (change) => {
+      if (change.type === useCombobox.stateChangeTypes.InputBlur) {
+        const validItem = inputItems.find((item) => item.label === inputValue);
+        if (validItem) {
+          if (selectedItem?.id !== validItem.id) {
+            selectItem(validItem);
+          }
+        } else {
+          selectItem(null);
+        }
+      }
+    },
   });
 
   // Update inputItems when options changes
@@ -175,7 +187,11 @@ const Combobox = ({
     }
   }, [inputItems, isOpen, setHighlightedIndex]);
 
-  const { onBlur, onClick, ...inputProps } = getInputProps();
+  const inputProps = getInputProps({
+    onClick: () => {
+      openMenu();
+    },
+  });
 
   return (
     <div className="root">
@@ -185,21 +201,7 @@ const Combobox = ({
         className={classNames('input', { selected: selectedItem })}
         {...getComboboxProps()}
       >
-        <input
-          placeholder={placeholder}
-          spellCheck={false}
-          onClick={(e) => {
-            openMenu();
-            onClick && onClick(e);
-          }}
-          onBlur={(e) => {
-            if (selectedItem && inputValue !== selectedItem.label) {
-              selectItem(null);
-            }
-            onBlur && onBlur(e);
-          }}
-          {...inputProps}
-        />
+        <input placeholder={placeholder} spellCheck={false} {...inputProps} />
         {selectedItem && (
           <button
             aria-label="Clear"
