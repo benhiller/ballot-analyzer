@@ -191,7 +191,7 @@ export async function getContestResults(query) {
     );
   }
 
-  let key = 'votes-by-candidate';
+  let key = `votes-by-candidate-e${electionId}`;
   if (query.candidate) {
     key = `${key}-c${query.candidate}`;
   }
