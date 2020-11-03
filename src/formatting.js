@@ -68,6 +68,10 @@ export const humanReadableContest = (name) => {
   return capitalizeName(name);
 };
 
+export const includeContestInOptionLabel = (contest) => {
+  return contest.startsWith('Proposition');
+};
+
 export const alternativeContestNames = (name) => {
   if (name.toLowerCase().startsWith('proposition')) {
     return ['prop ' + name.match(/proposition ([0-9a-z]+)/i)[1]];

@@ -7,6 +7,7 @@ import {
   humanReadableContest,
   shouldRenderDistrict,
   humanReadableDistrict,
+  includeContestInOptionLabel,
 } from 'src/formatting';
 import Combobox from 'src/components/Combobox';
 // import CandidateTypeaheadMenu from 'src/components/CandidateTypeaheadMenu';
@@ -158,15 +159,16 @@ const Header = ({
           continue;
         }
 
+        const contestName = humanReadableContest(candidate.contest.name);
         const option = {
           id: candidate.id,
           label:
             capitalizeName(candidate.name) +
-            ' (' +
-            humanReadableContest(candidate.contest.name) +
-            ')',
+            (includeContestInOptionLabel(contestName)
+              ? ` (${contestName})`
+              : ''),
           menuLabel: capitalizeName(candidate.name),
-          groupBy: humanReadableContest(candidate.contest.name),
+          groupBy: contestName,
           alternativeContestNames: alternativeContestNames(
             candidate.contest.name,
           ).join(' '),
