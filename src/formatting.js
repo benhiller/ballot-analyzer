@@ -63,6 +63,9 @@ export const humanReadableContest = (name) => {
     return `${humanReadableParty(
       party,
     )} County Central Committee - ${district}`;
+  } else if (name.toLowerCase().startsWith('proposition')) {
+    const prop = name.slice('proposition '.length);
+    return `Proposition ${prop}`;
   }
 
   return capitalizeName(name);
