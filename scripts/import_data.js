@@ -266,10 +266,29 @@ const importVotes = async (
               precinct_portion_id: precinctPortionIdMap[vote.PrecinctPortionId],
             };
 
+            const includeMark = (mark) => {
+              if (!mark.IsVote || mark.Rank !== 1) {
+                return false;
+              }
+
+              if (mark.OutstackConditionIds) {
+                // TODO - this should really read
+                // OutstackConditionManfiest.json to determine which ID is a
+                // write-in, rather than hard-coding 1
+                return (
+                  mark.OutstackConditionIds.length === 0 ||
+                  (mark.OutstackConditionIds.length === 1 &&
+                    mark.OutstackConditionIds[0] === 1)
+                );
+              } else {
+                return true;
+              }
+            };
+
             const processContests = (contests) => {
               for (const contest of contests) {
                 for (const mark of contest.Marks) {
-                  if (mark.IsVote && mark.Rank === 1) {
+                  if (includeMark(mark)) {
                     rows.push({
                       ...rowTemplate,
                       candidate_id: candidateIdMap[mark.CandidateId],
