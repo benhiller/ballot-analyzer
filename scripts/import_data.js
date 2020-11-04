@@ -269,7 +269,7 @@ const importVotes = async (
             const processContests = (contests) => {
               for (const contest of contests) {
                 for (const mark of contest.Marks) {
-                  if (mark.IsVote) {
+                  if (mark.IsVote && mark.Rank === 1) {
                     rows.push({
                       ...rowTemplate,
                       candidate_id: candidateIdMap[mark.CandidateId],
