@@ -331,7 +331,7 @@ function HomePage({
         />
         <meta property="og:title" content="SF Ballot Analytics" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://sf.ballotanaltics.app/" />
+        <meta property="og:url" content="https://sf.ballotanalytics.app" />
         <meta property="og:image" content="/og.png" />
         <title>SF Ballot Analytics</title>
         <script
