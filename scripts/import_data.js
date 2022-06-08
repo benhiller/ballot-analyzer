@@ -72,7 +72,7 @@ const importElection = async () => {
     'ElectionEventManifest.json',
     'election',
     (item) => ({
-      cvr_id: item.Id,
+      cvr_id: item.Id.toString(),
       name: item.Description,
       date: item.ElectionDate,
     }),
@@ -83,7 +83,7 @@ const importElection = async () => {
 
 const importBallotTypes = async () => {
   return importManifest('BallotTypeManifest.json', 'ballot_type', (item) => ({
-    cvr_id: item.Id,
+    cvr_id: item.Id.toString(),
     name: item.Description,
   }));
 };
@@ -93,7 +93,7 @@ const importCountingGroups = async () => {
     'CountingGroupManifest.json',
     'counting_group',
     (item) => ({
-      cvr_id: item.Id,
+      cvr_id: item.Id.toString(),
       name: item.Description,
     }),
   );
@@ -101,7 +101,7 @@ const importCountingGroups = async () => {
 
 const importParties = async () => {
   return importManifest('PartyManifest.json', 'party', (item) => ({
-    cvr_id: item.Id,
+    cvr_id: item.Id.toString(),
     name: item.Description,
   }));
 };
@@ -111,7 +111,7 @@ const importPrecinctPortions = async () => {
     'PrecinctPortionManifest.json',
     'precinct_portion',
     (item) => ({
-      cvr_id: item.Id,
+      cvr_id: item.Id.toString(),
       name: item.Description,
     }),
   );
@@ -122,7 +122,7 @@ const importDistrictTypes = async () => {
     'DistrictTypeManifest.json',
     'district_type',
     (item) => ({
-      cvr_id: item.Id,
+      cvr_id: item.Id.toString(),
       name: item.Description,
     }),
   );
@@ -130,7 +130,7 @@ const importDistrictTypes = async () => {
 
 const importDistricts = async (districtTypeIdMap) => {
   return importManifest('DistrictManifest.json', 'district', (item) => ({
-    cvr_id: item.Id,
+    cvr_id: item.Id.toString(),
     name: item.Description,
     district_type_id: districtTypeIdMap[item.DistrictTypeId],
   }));
@@ -174,7 +174,7 @@ const importBallotTypeContestAssocs = async (ballotTypeIdMap, contestIdMap) => {
 
 const importContests = async () => {
   return importManifest('ContestManifest.json', 'contest', (item) => ({
-    cvr_id: item.Id,
+    cvr_id: item.Id.toString(),
     name: item.Description,
     num_votes: item.VoteFor,
     num_ranks: item.NumOfRanks,
@@ -183,7 +183,7 @@ const importContests = async () => {
 
 const importCandidates = async (contestIdMap) => {
   return importManifest('CandidateManifest.json', 'candidate', (item) => ({
-    cvr_id: item.Id,
+    cvr_id: item.Id.toString(),
     name: item.Description,
     contest_id: contestIdMap[item.ContestId],
   }));
