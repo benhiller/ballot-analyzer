@@ -9,3 +9,15 @@ You can obtain the cast vote records for SF elections [here](https://sfelections
 This repo also contains a script to import the cast vote records into a DB, and a script to generate a district precinct portion manifest for CVRs from one election from another election, since for some reason that file was not available in the Nov 2019 CVR election results from SF, but it was for the Mar 2020 CVR election results, and the precincts fortunately hadn't changed between those two elections.
 
 This app is not currently online.
+
+# Setup
+
+1. Create .env file containing:
+  1. PG_CONNECTION_STRING (Required), connection string for Postgres DB
+  2. MC_CONNECTION_STRING (Optional), connection string for Memcached cluster
+  3. NEXT_PUBLIC_ANALYTICS_ID (Optional), something analytics related
+2. Run `CREATE DATABASE ballots` on your Postgres DB
+3. Run yarn run knex migrate:latest
+4. Download 'Cast Vote Record (Raw data) - JSON' from https://sfelections.sfgov.org for the relevant election
+5. Run yarn import-data $CVR_PATH
+6. Launch the server, using standard Next.js commands
