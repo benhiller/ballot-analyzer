@@ -16,11 +16,7 @@ const styles = css`
   .titleContainer {
     margin: 0px -20px 15px;
     padding: 15px 20px 15px;
-    background: linear-gradient(
-      90deg,
-      rgba(14, 82, 198, 1) 25%,
-      rgba(190, 36, 51, 1) 75%
-    );
+    background: rgb(14, 82, 198, 1);
     color: white;
     display: flex;
     justify-content: space-between;
