@@ -138,6 +138,12 @@ const sortAndGroupContests = (contestResults, candidateFilter) => {
       contests.splice(contestIdxToHoist, 1);
       contests.splice(0, 0, contest);
     }
+
+    // Move contests with fewer unknown votes to front of page. Round to 1000 so that ordering of contests is still somewhat preserved
+    contests.sort(
+      (a, b) =>
+        Math.floor(b.distinctVotes / 1000) - Math.floor(a.distinctVotes / 1000),
+    );
   }
 
   return contests.reduce((arr, contest) => {
