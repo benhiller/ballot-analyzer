@@ -13,9 +13,9 @@ This app is not currently online.
 # Setup
 
 1. Create .env file containing:
-  1. PG_CONNECTION_STRING (Required), connection string for Postgres DB
-  2. MC_CONNECTION_STRING (Optional), connection string for Memcached cluster
-  3. NEXT_PUBLIC_ANALYTICS_ID (Optional), something analytics related
+    * PG_CONNECTION_STRING (Required), connection string for Postgres DB
+    * MC_CONNECTION_STRING (Optional), connection string for Memcached cluster
+    * NEXT_PUBLIC_ANALYTICS_ID (Optional), something analytics related
 2. Run `CREATE DATABASE ballots` on your Postgres DB
 3. Run yarn run knex migrate:latest
 4. Download 'Cast Vote Record (Raw data) - JSON' from https://sfelections.sfgov.org for the relevant election
