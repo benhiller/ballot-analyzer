@@ -41,7 +41,7 @@ const styles = css`
     .title {
       margin-bottom: 0;
       font-size: 28px;
-      font-weight: 200;
+      font-weight: 400;
     }
   }
 
