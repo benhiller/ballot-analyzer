@@ -148,7 +148,16 @@ const Combobox = ({
     id,
     items: inputItems,
     itemToString: (item) => {
-      return item ? item.label : '';
+      if (!item) {
+        return '';
+      }
+      if (
+        item.label.toLowerCase() == 'no' ||
+        item.label.toLowerCase() == 'yes'
+      ) {
+        return `${item.groupBy}: ${item.label}`;
+      }
+      return item.label;
     },
     onInputValueChange: ({ inputValue }) => {
       setInputItems(
